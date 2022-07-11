@@ -12,7 +12,6 @@
   "bugs": {
     "url": "https://github.com/jrequizo/chatapp-client/issues"
   },
-  "homepage": "https://github.com/jrequizo/chatapp-client#readme",
   "dependencies": {
     "@babel/core": "^7.16.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
