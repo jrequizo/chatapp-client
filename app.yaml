@@ -1,5 +1,4 @@
 runtime: nodejs14
-service: frontend
 
 handlers:
   - url: /static/js/(.*)
