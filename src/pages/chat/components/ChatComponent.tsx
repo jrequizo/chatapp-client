@@ -67,18 +67,19 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 	/**
 	 * Create the JSX.Element[] props for the Chat buttons on the left navigation panel.
 	 */
-	const chatNavigationButtons =  publicChats.map((property, index) => {
-		/** 
-		 * `activeChat` may not have a value on first render and may not update on re-render, so use
-		 * the first element in publicChats (if publicChats is populated).
-		 */
+	const chatNavigationButtons = publicChats.map((property, index) => {
 		let selected = publicChats[activeChat];
-		return <ChatNavigationButton chatName={property.chatName} name={index.toString()} key={property.chatId} active={selected.chatId === property.chatId} onClick={_onChatNavigationButtonPressed}/>
+		return <ChatNavigationButton
+			chatName={property.chatName}
+			name={index.toString()}
+			key={property.chatId}
+			active={selected.chatId === property.chatId}
+			onClick={_onChatNavigationButtonPressed}
+		/>
 	})
 
 	/**
-	 * Extending the callback function executed when a Chat is selected in the left navigation panel.
-	 * Just does some local 
+	 * Update the local state of which Chat is selected then pass the callback back up the component tree.
 	 * @param event 
 	 */
 	function _onChatNavigationButtonPressed(event: React.MouseEvent<HTMLButtonElement>) {

@@ -15,6 +15,11 @@ type ChatboxProps = {
 	messageHandler: MessageHandler
 }
 
+/**
+ * The inner Chatbox that renders the text inputs and the messages. 
+ * @param {ChatboxProps} ChatboxProps 
+ * @returns 
+ */
 const Chatbox: React.FC<ChatboxProps> = ({
 	properties,
 	onSendMessage,
@@ -78,11 +83,7 @@ const Chatbox: React.FC<ChatboxProps> = ({
 		<div className="flex flex-col grow shrink w-full h-full">
 
 			<div className="h-16 flex items-center shadow-md w-full">
-				<span className="pl-6 text-left text-2xl">
-					{
-						`#${properties?.chatName || "Loading..."}`
-					}
-				</span>
+				<span className="pl-6 text-left text-2xl">{`#${properties?.chatName}`}</span>
 			</div>
 
 			<div className="flex flex-col grow w-full h-full">
@@ -90,19 +91,9 @@ const Chatbox: React.FC<ChatboxProps> = ({
 				<div className="flex flex-col-reverse grow basis-0 h-full overflow-y-scroll">
 					{
 						/**
-						 * Create components
+						 * Create Message components
 						 */
-						messages.map((message) => {
-							return (
-								<ChatMessageComponent
-									senderId={message.sender.uid}
-									senderUsername={message.sender.username}
-									senderPfpUrl={message.sender.pfp_url}
-									message={message.content}
-									timestamp={message.timestamp}
-								/>
-							)
-						})
+						messages.map((message) => <ChatMessageComponent messageDetails={message}/>)
 					}
 				</div>
 

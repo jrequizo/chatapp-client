@@ -1,13 +1,11 @@
 import { useNavigate } from 'react-router'
+
 import { getProfile } from '@/utils/credentialManager'
+import ChatMessage from '@/types/ChatMessage'
 
 
 type ChatMessageComponentProps = {
-	senderId: string
-	senderUsername: string
-	senderPfpUrl: string
-	message: string
-	timestamp: number
+	messageDetails: ChatMessage
 }
 
 /**
@@ -18,49 +16,32 @@ type ChatMessageComponentProps = {
  * @returns 
  */
 const ChatMessageComponent: React.FC<ChatMessageComponentProps> = ({
-	senderId,
-	senderUsername,
-	senderPfpUrl,
-	message,
-	timestamp
+	messageDetails
 }) => {
 	const navigate = useNavigate()
 
-	const currentUserId = getProfile()?.uid
+	const { content, sender } = messageDetails
 
 	function onProfileIconClicked() {
-		navigate(`/profile/${senderId}`)
+		navigate(`/profile/${messageDetails.sender.uid}`)
 	}
 
-	if (senderId === currentUserId) {
-		return (
-			<div className="flex flex-col items-start items-end">
-				<span className="px-3 py-1 font-bold">{senderUsername}</span>
-				<div className="flex flex-row-reverse h-fit mx-1 my-auto mx-3 gap-2" id={senderId}>
-					<button className="h-full items-baseline bg-transparent border-none h-12 w-12 min-profile-button-size" onClick={onProfileIconClicked}>
-						<img className="rounded-full overflow-hidden h-12 w-12 object-cover min-profile-button-size" src={senderPfpUrl} alt="Profile"></img>
-					</button>
-					<div className="bg-blue-700 text-white rounded-lg p-2 align-middle flex">
-						<span className="flex items-center message-size">{message}</span>
-					</div>
+	const isSender = sender.uid === getProfile()?.uid
+
+	return (
+		<div className={`flex flex-col items-start ${(isSender ? "items-end" : "")}`}> {/* right {items-end} */}
+			<span className="px-3 py-1 font-bold">{sender.username}</span>
+			<div className="flex flex-row-reverse h-fit mx-1 my-auto mx-3 gap-2" id={sender.uid}>
+				<button className="h-full items-baseline bg-transparent border-none h-12 w-12 min-profile-button-size" onClick={onProfileIconClicked}>
+					<img className="rounded-full overflow-hidden h-12 w-12 object-cover min-profile-button-size" src={sender.pfp_url} alt="Profile"></img>
+				</button>
+				<div className={`text-white rounded-lg p-2 align-middle flex ${(isSender ? "bg-blue-700" : "bg-theme-darkgreen")}`}> {/* right {bg-blue-700} */}
+					<span className="flex items-center message-size">{content}</span>
 				</div>
 			</div>
-		)
-	} else {
-		return (
-			<div className="flex flex-col items-start">
-				<span className="px-3 py-1 font-bold">{senderUsername}</span>
-				<div className="flex h-fit mx-1 my-auto mx-3 gap-2" id={senderId}>
-					<button className="h-full items-baseline bg-transparent border-none h-12 w-12 min-profile-button-size" onClick={onProfileIconClicked}>
-						<img className="rounded-full overflow-hidden h-12 w-12 object-cover min-profile-button-size" src={senderPfpUrl} alt="Profile"></img>
-					</button>
-					<div className="bg-theme-darkgreen text-white rounded-lg p-2 align-middle flex">
-						<span className="flex items-center message-size">{message}</span>
-					</div>
-				</div>
-			</div>
-		)
-	}
+		</div>
+	)
 }
+
 
 export default ChatMessageComponent
