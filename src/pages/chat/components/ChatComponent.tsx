@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import ProfileData from "@/types/ProfileData";
 import ChatProperties from "@/types/ChatProperties";
@@ -8,20 +8,41 @@ import Navbar from "@components/Navbar/Navbar";
 import Chatbox from "./ChatboxComponent";
 import ChatNavigationButton from "./ChatNavigationButtonComponent";
 import MessageHandler from "../MessageHandler";
-interface ChatProps {
 
+interface ChatComponentProps {
+	// The User's public profile data.
 	profileData: ProfileData | null
 
+	// The public chats to display in the navigator.
 	onSendMessage: (message: string) => void
 
+	// Callback handler for when the User presses enter or presses the send button on the chat.
 	onChatNavigationButtonPressed: (event: React.MouseEvent<HTMLButtonElement>) => void
 
+	// Callback handler for when the User selects a Chat on the left sidebar.
 	publicChats: Array<ChatProperties>
 
+	/**
+	 * onMessage callback handler, fires the attached callback when a new message is received
+	 * from the Socket.IO client.
+	 */
 	messageHandler: MessageHandler
 }
 
-const Chat: React.FC<ChatProps> = ({
+/**
+ * Chat page view.
+ * 
+ * @param {ChatComponentProps} ChatComponentProps
+ * 
+ * Properties:
+ * * `profileData` The User's public profile data.
+ * * `publicChats` The public chats to display in the navigator.
+ * * `onSendMessage` Callback handler for when the User presses enter or presses the send button on the chat.
+ * * `onChatNavigationButtonPressed` Callback handler for when the User selects a Chat on the left sidebar.
+ * * `messageHandler` onMessage callback handler, fires the attached callback when a new message is received from the Socket.IO client.
+ * @returns ChatComponent
+ */
+const ChatComponent: React.FC<ChatComponentProps> = ({
 	// The User's public profile data.
 	profileData,
 
@@ -34,6 +55,10 @@ const Chat: React.FC<ChatProps> = ({
 	// Callback handler for when the User selects a Chat on the left sidebar.
 	onChatNavigationButtonPressed,
 
+	/**
+	 * onMessage callback handler, fires the attached callback when a new message is received
+	 * from the Socket.IO client.
+	 */
 	messageHandler
 }) => {
 	// State for currently selected Chat.
@@ -97,4 +122,4 @@ const Chat: React.FC<ChatProps> = ({
 	)
 }
 
-export default Chat
+export default ChatComponent

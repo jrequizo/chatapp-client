@@ -34,6 +34,7 @@ function Chat() {
 
 	// Retrieve the User's public profile information
 	const profileQuery = API.useQuery(["profile.profileData", { uid: currentUid! }], {
+		enabled: !!currentUid,
 		onSuccess(data) {
 			// Cache the User's profile information
 			storeProfile(data)

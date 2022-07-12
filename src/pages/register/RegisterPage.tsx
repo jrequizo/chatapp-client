@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router";
 
 import { storeCredentials, storeUid } from "@/utils/credentialManager";
 import { API } from "@/utils/trpc/trpc";
 
-import Login from "./components/Register";
+import Register from "./components/Register";
 
 /**
  * Login component handler. Handles the callback functions and some initial data requests.
@@ -18,7 +18,7 @@ function RegisterPage() {
 	/**
 	 * tRPC mutation for logging in the User.
 	 */
-	const login = API.useMutation(["auth.login"], {
+	const register = API.useMutation(["account.register"], {
 		onSuccess(data) {
 			// Cahe User credentials
 			storeCredentials({
@@ -34,13 +34,13 @@ function RegisterPage() {
 	})
 
 	// Call the tRPC mutation.
-	async function onRegisterButtonPressed(email: string, password: string) {
-		login.mutate({email: email, password: password})
+	async function onRegisterButtonPressed(email: string, username: string, password: string) {
+		register.mutate({email: email, username: username, password: password})
 	}
 
 	return (
-		<Login 
-			onRegisterButtonPressed={onRegisterButtonPressed}
+		<Register 
+			onButtonPressed={onRegisterButtonPressed}
 		/>
 	)
 }

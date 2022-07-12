@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 
 interface RegisterProps {
-	onRegisterButtonPressed?: (email: string, password: string) => void
+	onButtonPressed?: (email: string, username: string, password: string) => void
 }
 
 /**
  * Login Component/Page.
- * @param onLoginButtonPressed Callback function for when the Login button is pressed. 
+ * @param onRegisterButtonPressed Callback function for when the Login button is pressed. 
  */
 const Register: React.FC<RegisterProps> = ({
-	onRegisterButtonPressed: onLoginButtonPressed
+	onButtonPressed
 }) => {
 	const [emailField, setEmailField] = useState("")
-	const [usernaneField, setUsernameField] = useState("")
+	const [usernameField, setUsernameField] = useState("")
 	const [passwordField, setPasswordField] = useState("")
 
 	const onEmailChanged = (event: React.ChangeEvent<HTMLInputElement>) => setEmailField(event.target.value)
@@ -46,7 +46,7 @@ const Register: React.FC<RegisterProps> = ({
 							placeholder="Username..."
 							name="username"
 							onChange={onUsernameChanged}
-							value={usernaneField}
+							value={usernameField}
 						></input>
 						<input type="password"
 							className="text-sm mb-2 p-2 rounded-lg"
@@ -58,7 +58,7 @@ const Register: React.FC<RegisterProps> = ({
 						<button
 							className="my-0 ml-auto text-white bg-theme-green py-1 px-4 rounded-lg my-2 text-1xl font-bold hover:bg-green-600 transition mb-auto"
 							onClick={() => {
-								onLoginButtonPressed && onLoginButtonPressed(emailField, passwordField)
+								onButtonPressed && onButtonPressed(emailField, usernameField, passwordField)
 							}}
 						>Register</button>
 						<div

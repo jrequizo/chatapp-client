@@ -8,10 +8,22 @@ type ChatNavigationButtonProps = {
 	active?: boolean
 }
 
+/**
+ * Chat selector button that appears on the left navigation panel.
+ * @param {ChatNavigationButtonProps} ChatNavigationButtonProps
+ * @returns ChatNavigationButton
+ */
 const ChatNavigationButton: React.FC<ChatNavigationButtonProps> = ({
+	// Callback for when this button is clicked on.
 	onClick,
+
+	// The label text that appears on the button.
 	chatName,
+
+	// Index number of the Chat in the publicChats record.
 	name,
+
+	// Whether this is the currently selected Chat.
 	active,
 }) => {
 	let className = "w-full text-left text-base border-none rounded p-1 pl-4"

@@ -2,18 +2,25 @@ import { useNavigate } from 'react-router'
 import { getProfile } from '@/utils/credentialManager'
 
 
-type ChatMessageProps = {
-	sender_id: string
-	sender_username: string
-	sender_pfp: string
+type ChatMessageComponentProps = {
+	senderId: string
+	senderUsername: string
+	senderPfpUrl: string
 	message: string
 	timestamp: number
 }
 
-const ChatMessageComponent: React.FC<ChatMessageProps> = ({
-	sender_id,
-	sender_username,
-	sender_pfp,
+/**
+ * Component for the individual Chat messages that appear in the `ChatboxComponent`.
+ * Contains the Username title, a profile picture button that navigates to their profile, 
+ * and the message contents.
+ * @param {ChatMessageComponentProps} ChatMessageComponentProps
+ * @returns 
+ */
+const ChatMessageComponent: React.FC<ChatMessageComponentProps> = ({
+	senderId,
+	senderUsername,
+	senderPfpUrl,
 	message,
 	timestamp
 }) => {
@@ -22,16 +29,16 @@ const ChatMessageComponent: React.FC<ChatMessageProps> = ({
 	const currentUserId = getProfile()?.uid
 
 	function onProfileIconClicked() {
-		navigate(`/profile/${sender_id}`)
+		navigate(`/profile/${senderId}`)
 	}
 
-	if (sender_id === currentUserId) {
+	if (senderId === currentUserId) {
 		return (
 			<div className="flex flex-col items-start items-end">
-				<span className="px-3 py-1 font-bold">{sender_username}</span>
-				<div className="flex flex-row-reverse h-fit mx-1 my-auto mx-3 gap-2" id={sender_id}>
+				<span className="px-3 py-1 font-bold">{senderUsername}</span>
+				<div className="flex flex-row-reverse h-fit mx-1 my-auto mx-3 gap-2" id={senderId}>
 					<button className="h-full items-baseline bg-transparent border-none h-12 w-12 min-profile-button-size" onClick={onProfileIconClicked}>
-						<img className="rounded-full overflow-hidden h-12 w-12 object-cover min-profile-button-size" src={sender_pfp} alt="Profile"></img>
+						<img className="rounded-full overflow-hidden h-12 w-12 object-cover min-profile-button-size" src={senderPfpUrl} alt="Profile"></img>
 					</button>
 					<div className="bg-blue-700 text-white rounded-lg p-2 align-middle flex">
 						<span className="flex items-center message-size">{message}</span>
@@ -42,10 +49,10 @@ const ChatMessageComponent: React.FC<ChatMessageProps> = ({
 	} else {
 		return (
 			<div className="flex flex-col items-start">
-				<span className="px-3 py-1 font-bold">{sender_username}</span>
-				<div className="flex h-fit mx-1 my-auto mx-3 gap-2" id={sender_id}>
+				<span className="px-3 py-1 font-bold">{senderUsername}</span>
+				<div className="flex h-fit mx-1 my-auto mx-3 gap-2" id={senderId}>
 					<button className="h-full items-baseline bg-transparent border-none h-12 w-12 min-profile-button-size" onClick={onProfileIconClicked}>
-						<img className="rounded-full overflow-hidden h-12 w-12 object-cover min-profile-button-size" src={sender_pfp} alt="Profile"></img>
+						<img className="rounded-full overflow-hidden h-12 w-12 object-cover min-profile-button-size" src={senderPfpUrl} alt="Profile"></img>
 					</button>
 					<div className="bg-theme-darkgreen text-white rounded-lg p-2 align-middle flex">
 						<span className="flex items-center message-size">{message}</span>

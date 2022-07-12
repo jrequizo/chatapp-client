@@ -7,8 +7,8 @@ import { API } from '@/utils/trpc/trpc';
 
 // import { API } from "./utils/trpc/trpc";
 
-import LoginPage from './pages/login/LoginPage';
-import Register from './pages/register/components/Register';
+import Login from './pages/login/LoginPage';
+import Register from './pages/register/RegisterPage';
 import Chat from './pages/chat/Chat';
 import Profile from './pages/profile/Profile';
 
@@ -23,7 +23,7 @@ const AppContent = () => {
       <Routes>
         <Route index element={<Chat />} />
         <Route path="/">
-          <Route path="login" element={<LoginPage />} />
+          <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="profile/*" element={<Profile />} />
           <Route path="under-construction" element={<UnderConstruction />} />

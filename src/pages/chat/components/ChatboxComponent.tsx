@@ -26,18 +26,19 @@ const Chatbox: React.FC<ChatboxProps> = ({
 	const [messageInput, setMessageInput] = useState("");
 
 	/**
-	 * 
+	 * Retrieve last 20 messages from API.
 	 */
 	const messagesQuery = API.useQuery(["chat.chatHistory", {
-		chatId: properties?.chatId || "",
+		chatId: properties?.chatId,
 	}], {
+		enabled: !!properties,
 		onSuccess(data) {
 			setMessages(data);
 		},
 	})
 
 	/**
-	 * 
+	 * Callback fired when a KeyboardEvent is detected from the <input/> element
 	 * @param event 
 	 */
 	function onInputChanged(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -88,12 +89,15 @@ const Chatbox: React.FC<ChatboxProps> = ({
 
 				<div className="flex flex-col-reverse grow basis-0 h-full overflow-y-scroll">
 					{
+						/**
+						 * Create components
+						 */
 						messages.map((message) => {
 							return (
 								<ChatMessageComponent
-									sender_id={message.sender.uid}
-									sender_username={message.sender.username}
-									sender_pfp={message.sender.pfp_url}
+									senderId={message.sender.uid}
+									senderUsername={message.sender.username}
+									senderPfpUrl={message.sender.pfp_url}
 									message={message.content}
 									timestamp={message.timestamp}
 								/>
