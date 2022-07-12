@@ -31,10 +31,11 @@ const Chatbox: React.FC<ChatboxProps> = ({
 	const [messageInput, setMessageInput] = useState("");
 
 	/**
-	 * Retrieve last 20 messages from API.
+	 * Retrieve last `length` messages (or default of 20) from API.
 	 */
 	const messagesQuery = API.useQuery(["chat.chatHistory", {
 		chatId: properties?.chatId,
+		length: 40
 	}], {
 		enabled: !!properties,
 		onSuccess(data) {
