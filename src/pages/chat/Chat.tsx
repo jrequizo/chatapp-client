@@ -77,7 +77,6 @@ function Chat() {
 		_socket.on('connect', () => {
 			/**
 			 * Authenticate the User once the connection to the socket.io server is established.
-			 * Will also re-connect and re-authenticate when connection is lost with the server.
 			 * This will emit an `authenticated` event when completed with a boolean indicating
 			 * if the User successfully authenticated.
 			 */
@@ -86,6 +85,9 @@ function Chat() {
 			})
 		})
 
+		/**
+		 * Emission handler when the `authenticate` event is handled on the socket.io server.
+		 */
 		_socket.on('authenticated', (isAuthenticated) => {
 			if (isAuthenticated) {
 				if (publicChatData.length > 0) {
