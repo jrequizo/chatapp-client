@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          token: '${{ secrets.GITHUB_TOKEN }}'
+          ssh-key: '${{ secrets.SSH_KEY }}'
       - uses: bahmutov/npm-install@v1
       - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
