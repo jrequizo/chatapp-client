@@ -70,6 +70,8 @@ function Chat() {
 	 */
 	const [messageHandler] = useState<MessageHandler>(new MessageHandler())
 	const [socket, setSocket] = useState<Socket>()
+
+	
 	useEffect(() => {
 		const _socket = io(`${process.env.REACT_APP_SOCKET_URL}`, { transports: ['websocket'] })
 
@@ -118,7 +120,7 @@ function Chat() {
 			_socket.close()
 		}
 
-	}, [setSocket, publicChatQuery.status])
+	}, [setSocket, publicChatQuery.status, jwt, messageHandler, navigator, publicChatData])
 
 	/**
 	 * Sends a Message to the socket.io server.
