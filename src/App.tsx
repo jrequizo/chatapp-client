@@ -40,7 +40,7 @@ function App() {
 
   const [trpcClient] = useState(() =>
     API.createClient({
-      url: 'http://localhost:3001/trpc'
+      url: `${process.env.REACT_APP_API_URL}/trpc`
     })
   )
 

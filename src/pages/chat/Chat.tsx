@@ -20,7 +20,7 @@ function Chat() {
 	const { jwt, refreshToken, userObject } = credentials
 
 	// If the credentials don't exist, redirect the User to the login page.
-	if (!(jwt || refreshToken || userObject)) {
+	if (!(jwt && refreshToken && userObject)) {
 		navigator("/login")
 	}
 
@@ -70,9 +70,7 @@ function Chat() {
 	const [messageHandler] = useState<MessageHandler>(new MessageHandler())
 	const [socket, setSocket] = useState<Socket>()
 	useEffect(() => {
-		// TODO: change from hard-coded URL
-		const _socket = io("http://localhost:3100", { transports: ['websocket'] })
-
+		const _socket = io(`${process.env.REACT_APP_SOCKET_URL}`, { transports: ['websocket'] })
 
 		_socket.on('connect', () => {
 			/**
@@ -80,9 +78,7 @@ function Chat() {
 			 * This will emit an `authenticated` event when completed with a boolean indicating
 			 * if the User successfully authenticated.
 			 */
-			_socket.emit("authenticate", {
-				jwt: jwt
-			})
+			_socket.emit("authenticate", {jwt: jwt})
 		})
 
 		/**
@@ -105,7 +101,7 @@ function Chat() {
 		})
 
 		/**
-		 * Bind the `MessageHandler` to consume the socket.io `client-message` event.
+		 * Bind the `MessageHandler` to consume the socket.io `emit-message` event.
 		 */
 		_socket.on('emit-message', (data) => messageHandler.onMessage(data))
 

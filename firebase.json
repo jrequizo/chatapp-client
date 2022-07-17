@@ -1,0 +1,34 @@
+{
+  "hosting": {
+    "public": "build",
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "ignore": [
+      ".unused",
+      "firebase.json",
+      "config",
+      "scripts",
+      ".gitignore",
+      "package.json",
+      "package-lock.json",
+      "tsocnfig.json",
+      "README.md",
+      "tailwind.config.js",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/trpc/**",
+        "run": {
+          "serviceId": "api",
+          "region": "australia-southeast2"
+        }
+      },
+      {
+        "source": "/**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
