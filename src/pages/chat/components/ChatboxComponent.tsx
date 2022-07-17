@@ -33,7 +33,9 @@ const Chatbox: React.FC<ChatboxProps> = ({
 	/**
 	 * Retrieve last `length` messages (or default of 20) from API.
 	 */
-	const messagesQuery = API.useQuery(["chat.chatHistory", {
+	
+	//  const messagesQuery = API.useQuery(["chat.chatHistory", {
+	API.useQuery(["chat.chatHistory", {
 		chatId: properties?.chatId,
 		length: 40
 	}], {
