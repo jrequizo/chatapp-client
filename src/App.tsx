@@ -23,6 +23,7 @@ const AppContent = () => {
       <Routes>
         <Route index element={<Chat />} />
         <Route path="/">
+          <div>Test pull request content</div>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="profile/*" element={<Profile />} />
