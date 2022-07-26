@@ -1,4 +1,5 @@
 import React from "react";
+import { useParams } from "react-router";
 import { useMutation } from "react-query";
 
 import { getUid, storeProfile } from "@/utils/credentialManager";
@@ -9,20 +10,27 @@ import ProfileComponent from "./ProfileComponent";
 import UserProfileComponent from "./UserProfileComponent";
 
 function Profile() {
-	const uid = window.location.pathname.split('/').pop()!
+	//
+	const utils = API.useContext()
+
+	//
+	const { id } = useParams();
+
+	// Stops Typescript from thinking uid may be undefined
+	const uid = id === undefined ? "" : id
+
 	const initialData = {
 		uid: uid,
 		username: "Loading...",
-		pfp_url: "https://storage.googleapis.com/chatapp-profile/pfp/default.png",
+		pfp_url: "https://storage.googleapis.com/chatapp-profile/pfp/default",
 		about: ""
 	};
 
 	const uploadPfpMutation = useMutation(uploadProfilePicture, {
 		async onSuccess() {
-			// TODO: invalidate and re-fetch profile data?
+			utils.invalidateQueries(["profile.profileData", {uid: uid}]);
 		},
 	})
-	
 	/**
 	 * Retrieve profile data from the API.
 	 */
@@ -32,17 +40,15 @@ function Profile() {
 			{
 				uid: uid,
 			}
-		],
-		{
-			enabled: !!uid,
-			initialData: initialData,
-		}
+		]
 	)
 
-	const isCurrentUser = (profileData?.uid || "") === getUid()
+	const isCurrentUser = uid === getUid()
 
 	async function _uploadProfilePicture(image: File) {
-		uploadPfpMutation.mutate(image);
+		const response = await uploadPfpMutation.mutateAsync(image)
+		
+		return response.status === 201;
 	}
 
 	//  Re-cache any new data
@@ -60,7 +66,9 @@ function Profile() {
 		return (
 			<UserProfileComponent
 				onUploadImageButtonPressed={_uploadProfilePicture}
-				profileData={profileData ?? initialData}
+				username={profileData.username}
+				about={profileData.about}
+				pfpUrl={profileData.pfp_url}
 			/>
 		)
 	} else {

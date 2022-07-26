@@ -25,7 +25,9 @@ const AppContent = () => {
         <Route path="/">
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route path="profile/*" element={<Profile />} />
+          <Route path="profile">
+            <Route path=":id" element={<Profile />}/>
+          </Route>
           <Route path="under-construction" element={<UnderConstruction />} />
           <Route path="*" element={<NoPage />} />
         </Route>
