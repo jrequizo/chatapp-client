@@ -22,6 +22,8 @@ const ChatMessageComponent: React.FC<ChatMessageComponentProps> = ({
 
 	const { content, sender } = messageDetails
 
+	const pfp = sender.pfp_url === "" ? "https://storage.googleapis.com/chatapp-profile/pfp/default.png" : sender.pfp_url;
+
 	function onProfileIconClicked() {
 		navigate(`/profile/${messageDetails.sender.uid}`)
 	}
@@ -33,7 +35,7 @@ const ChatMessageComponent: React.FC<ChatMessageComponentProps> = ({
 			<span className="px-3 py-1 font-bold">{sender.username}</span>
 			<div className="flex flex-row-reverse h-fit mx-1 my-auto mx-3 gap-2" id={sender.uid}>
 				<button className="h-full items-baseline bg-transparent border-none h-12 w-12 min-profile-button-size" onClick={onProfileIconClicked}>
-					<img className="rounded-full overflow-hidden h-12 w-12 object-cover min-profile-button-size" src={sender.pfp_url} alt="Profile"></img>
+					<img className="rounded-full overflow-hidden h-12 w-12 object-cover min-profile-button-size" src={pfp} alt="Profile"></img>
 				</button>
 				<div className={`text-white rounded-lg p-2 align-middle flex ${(isSender ? "bg-blue-700" : "bg-theme-darkgreen")}`}> {/* right {bg-blue-700} */}
 					<span className="flex items-center message-size">{content}</span>
