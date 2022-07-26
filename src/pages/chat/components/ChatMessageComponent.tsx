@@ -22,8 +22,8 @@ const ChatMessageComponent: React.FC<ChatMessageComponentProps> = ({
 
 	const { content, sender } = messageDetails
 
-	let pfp = sender.pfp_url === "" ? "https://storage.googleapis.com/chatapp-profile/pfp/default.png" : `${sender.pfp_url}`;
-	if (pfp.startsWith("https://storage.googleapis.com/") && pfp !== "https://storage.googleapis.com/chatapp-profile/pfp/default.png") {
+	let pfp = sender.pfp_url === "" ? "https://storage.googleapis.com/chatapp-profile/pfp/default" : `${sender.pfp_url}`;
+	if (pfp.startsWith("https://storage.googleapis.com/")) {
 		pfp += `-small.png?time=${Date.now()}`;
 	}
 

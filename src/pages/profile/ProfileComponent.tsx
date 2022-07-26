@@ -13,8 +13,7 @@ interface ProfileComponentProps {
 const ProfileComponent: React.FC<ProfileComponentProps> = ({
 	profileData
 }) => {
-
-	const pfp = profileData.pfp_url === "" ? "https://storage.googleapis.com/chatapp-profile/pfp/default.png" : profileData.pfp_url;
+	const pfpUrl = profileData.pfp_url === "" ? "https://storage.googleapis.com/chatapp-profile/pfp/default-large.png" : `${profileData.pfp_url}-large.png?time=${Date.now()}`;
 
 	return (
 		<main className="bg-gray-300">
@@ -25,7 +24,7 @@ const ProfileComponent: React.FC<ProfileComponentProps> = ({
 			<section className="grid grid-cols-1 md:grid-cols-2 bg-white mx-auto overflow-y-scroll md:w-8/12 w-screen">
 				{/* Left area */}
 				<div className="grid content-center mx-auto py-4 px-3">
-					<img className="rounded-3xl w-64 mx-auto aspect-square w-64" src={pfp} alt="Profile"></img>
+					<img className="rounded-3xl w-64 mx-auto aspect-square w-64" src={pfpUrl} alt="Profile"></img>
 					{/*TODO Put buttons in own div to make responsive on mobile */}
 					<button className="mb-4 px-1 py-1 sm:mt-3 bg-theme-darkgreen rounded-lg text-white hover:bg-theme-lightgreen">Add Friend</button>
 				</div>
