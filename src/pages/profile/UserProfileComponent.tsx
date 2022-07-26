@@ -39,7 +39,10 @@ const UserProfileComponent: React.FC<UserProfileComponentProps> = ({
 		}
 	}
 	
-	const _pfpUrl = pfpUrl === "" ? "https://storage.googleapis.com/chatapp-profile/pfp/default.png" : `${pfpUrl}?time=${Date.now()}`;
+	let _pfpUrl = pfpUrl === "" ? "https://storage.googleapis.com/chatapp-profile/pfp/default.png" : `${pfpUrl}`;
+	if (_pfpUrl.startsWith("https://storage.googleapis.com/")) {
+		_pfpUrl += `-large.png?time=${Date.now()}`;
+	}
 
 	/**
 	 * 
