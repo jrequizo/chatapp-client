@@ -22,7 +22,7 @@ const ChatMessageComponent: React.FC<ChatMessageComponentProps> = ({
 
 	const { content, sender } = messageDetails
 
-	const pfp = sender.pfp_url === "" ? "https://storage.googleapis.com/chatapp-profile/pfp/default.png" : sender.pfp_url;
+	const pfp = sender.pfp_url === "" ? "https://storage.googleapis.com/chatapp-profile/pfp/default.png" : `${sender.pfp_url}?time=${Date.now()}`;
 
 	function onProfileIconClicked() {
 		navigate(`/profile/${messageDetails.sender.uid}`)
