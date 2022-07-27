@@ -7,10 +7,10 @@ import { API } from '@/utils/trpc/trpc';
 
 // import { API } from "./utils/trpc/trpc";
 
-import Login from './pages/login/LoginPage';
+import LoginPage from './pages/login/LoginPage';
 import Register from './pages/register/RegisterPage';
 import Chat from './pages/chat/Chat';
-import Profile from './pages/profile/Profile';
+import ProfilePage from './pages/profile/ProfilePage';
 
 import NoPage from './pages/nopage/NoPage'
 import UnderConstruction from './pages/under-construction/UnderConstruction'
@@ -24,10 +24,10 @@ const AppContent = () => {
       <Routes>
         <Route index element={<Chat />} />
         <Route path="/">
-          <Route path="login" element={<Login />} />
+          <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<Register />} />
           <Route path="profile">
-            <Route path=":id" element={<Profile />}/>
+            <Route path=":id" element={<ProfilePage />}/>
           </Route>
           <Route path="under-construction" element={<UnderConstruction />} />
           <Route path="*" element={<NoPage />} />

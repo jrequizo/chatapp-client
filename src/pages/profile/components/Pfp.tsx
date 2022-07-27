@@ -3,19 +3,20 @@ import React from "react";
 
 import AddFriendComponent from "./AddFriend";
 
-interface UserProfileComponentProps {
+interface PfpProps {
 	pfpUrl: string
 }
 
-const UserProfileComponent: React.FC<UserProfileComponentProps> = ({
+const Pfp: React.FC<PfpProps> = ({
 	pfpUrl,
 }) => {
 	/**
 	 * Retrieve the `large` version of the pfp if we are using CDN-uploaded pfp's.
 	 * If the User is uploading their own picture, then the URL will point to a File.
 	 */
-	if (pfpUrl.startsWith("https://storage.googleapis.com/")) {
-		pfpUrl += `-large.png?time=${Date.now()}`;
+	let _pfpUrl = pfpUrl === "" ? "https://storage.googleapis.com/chatapp-profile/pfp/default" : pfpUrl;
+	if (_pfpUrl.startsWith("https://storage.googleapis.com/")) {
+		_pfpUrl += `-large.png?time=${Date.now()}`;
 	}
 
 	/**
@@ -30,7 +31,7 @@ const UserProfileComponent: React.FC<UserProfileComponentProps> = ({
 			<div className="grid content-center mx-auto py-4 px-3">
 				<img
 					className="rounded-3xl w-64 mx-auto aspect-square w-64 object-cover"
-					src={pfpUrl}
+					src={_pfpUrl}
 					alt="Profile"
 				></img>
 				<AddFriendComponent
@@ -41,4 +42,4 @@ const UserProfileComponent: React.FC<UserProfileComponentProps> = ({
 	)
 }
 
-export default UserProfileComponent
+export default Pfp
