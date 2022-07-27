@@ -16,6 +16,7 @@ import NoPage from './pages/nopage/NoPage'
 import UnderConstruction from './pages/under-construction/UnderConstruction'
 
 import './App.css';
+import { getJwt } from './utils/credentialManager';
 
 const AppContent = () => {
   return (
@@ -43,7 +44,12 @@ function App() {
 
   const [trpcClient] = useState(() =>
     API.createClient({
-      url: url
+      url: url,
+      headers() {
+        return {
+          authorization: `Bearer ${getJwt()}`
+        }
+      },
     })
   )
 
