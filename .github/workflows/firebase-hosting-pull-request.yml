@@ -13,8 +13,6 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
       - uses: bahmutov/npm-install@v1
-        with:
-          useLockFile: false
       - run: npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
