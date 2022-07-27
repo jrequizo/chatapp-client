@@ -13,7 +13,7 @@ export async function uploadProfilePicture(image: File) {
 	console.log(image)
 
 	const response = await fetch(
-		apiUrl + `/api/profile/${uid}/upload`,
+		apiUrl + `/api/express/profile/${uid}/upload`,
 		{
 			method: "POST",
 			headers: {
