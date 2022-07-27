@@ -19,7 +19,7 @@
     ],
     "rewrites": [
       {
-        "source": "/trpc/**",
+        "source": "/api/**",
         "run": {
           "serviceId": "api",
           "region": "australia-southeast2"
