@@ -36,13 +36,14 @@ const AppContent = () => {
   )
 };
 
+const url = process.env.NODE_ENV === 'development' ? 'http://localhost:3001/api/trpc' : `${process.env.PUBLIC_URL}/api/trpc`
 
 function App() {
   const [queryClient] = useState(() => new QueryClient());
 
   const [trpcClient] = useState(() =>
     API.createClient({
-      url: `${process.env.PUBLIC_URL}/api/trpc`
+      url: url
     })
   )
 

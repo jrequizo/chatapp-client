@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import Navbar from "@components/Navbar/Navbar";
 
 import ProfileBar from "./components/ProfileBar";
+import FriendsList from "./components/FriendsList";
 
 interface UserProfileComponentProps {
 	username: string
@@ -29,6 +30,18 @@ const UserProfileComponent: React.FC<UserProfileComponentProps> = ({
 	 */
 	const [_displayedPfp, _setDisplayedPfp] = useState(pfpUrl);
 
+	const [isEditorVisible, setIsEditorVisible] = useState(false);
+
+	const [aboutText, setAboutText] = useState(about);
+
+	const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+	useEffect(() => {
+		if (isEditorVisible && textAreaRef) {
+			textAreaRef.current?.focus();
+		}
+	}, [isEditorVisible])
+
 	/**
 	 * 
 	 * @param event 
@@ -42,7 +55,7 @@ const UserProfileComponent: React.FC<UserProfileComponentProps> = ({
 			setSelectedImage(event.target.files?.item(0) ?? null)
 		}
 	}
-	
+
 	let _pfpUrl = _displayedPfp === "" ? "https://storage.googleapis.com/chatapp-profile/pfp/default" : _displayedPfp;
 	if (_pfpUrl.startsWith("https://storage.googleapis.com/")) {
 		_pfpUrl += `-large.png?time=${Date.now()}`;
@@ -56,6 +69,11 @@ const UserProfileComponent: React.FC<UserProfileComponentProps> = ({
 		setSelectedImage(null);
 	}
 
+	function onAboutChanged(event: React.ChangeEvent<HTMLTextAreaElement>) {
+		const { value } = event.currentTarget;
+		setAboutText(value);
+	}
+
 	return (
 		<main className="bg-gray-300">
 			<Navbar />
@@ -64,10 +82,10 @@ const UserProfileComponent: React.FC<UserProfileComponentProps> = ({
 			<section className="grid grid-cols-1 md:grid-cols-2 bg-white mx-auto overflow-y-scroll md:w-8/12 w-screen">
 				{/* Left area */}
 				<div className="grid content-center mx-auto py-4 px-3">
-					<img className="rounded-3xl w-64 mx-auto aspect-square w-64" src={_pfpUrl} alt="Profile"></img>
+					<img className="rounded-3xl w-64 mx-auto aspect-square w-64 object-cover" src={_pfpUrl} alt="Profile"></img>
 					{/*TODO Put buttons in own div to make responsive on mobile */}
 					{
-						(!selectedImage 
+						(!selectedImage
 							?
 							<label className="mb-4 px-1 py-1 sm:mt-3 bg-blue-600 hover:bg-blue-400 rounded-lg text-white text-center">
 								Change Picture
@@ -84,11 +102,11 @@ const UserProfileComponent: React.FC<UserProfileComponentProps> = ({
 											resetSelectedFile()
 										}
 									}}
-									// disabled={uploadPfpMutation.status === 'loading'}
+								// disabled={uploadPfpMutation.status === 'loading'}
 								>Save</button>
 								<button
 									className="flex-1 mb-4 px-1 py-1 sm:mt-3 bg-red-700 rounded-lg text-white hover:bg-red-500"
-									onClick={() => {resetSelectedFile()}}
+									onClick={() => { resetSelectedFile() }}
 								>Cancel</button>
 							</div>
 						)
@@ -98,21 +116,38 @@ const UserProfileComponent: React.FC<UserProfileComponentProps> = ({
 				</div>
 				{/* Right area */}
 				<div className="py-4 px-3 sm:border-t-2 md:border-t-0 md:border-l-2">
-					<div className="flex flex-row">
-						<h3 className="pb-1 w-full font-bold border-b border-gray-300">About Me</h3>
-						<button className="text-theme-darkgreen">Edit</button>
+					<div className="flex flex-row border-b border-gray-300">
+						<h3 className="pb-1 w-full font-bold">About Me</h3>
+						{!isEditorVisible && <button className="text-theme-darkgreen" onClick={() => {
+							setIsEditorVisible(true);
+						}}>Edit</button>}
 					</div>
-					<p className="h-full pt-2">{about}</p>
+					<form className="h-full">
+						{
+							isEditorVisible
+								?
+								<div className="h-full flex grow flex-col p-2">
+									{/** content */}
+									<div className="h-full">
+										<textarea className="border-solid border h-full w-full resize-none" ref={textAreaRef} value={aboutText} onChange={onAboutChanged}/>
+									</div>
+									{/** ui */}
+									<div className="flex flex-row-reverse gap-x-2">
+										<button className="mb-4 px-1 py-1 sm:mt-3 bg-red-700 rounded-lg text-white hover:bg-red-500" onClick={() => { 
+											setIsEditorVisible(false);
+											setAboutText(about)
+										}}>Cancel</button>
+										<button className="mb-4 px-1 py-1 sm:mt-3 bg-theme-darkgreen rounded-lg text-white hover:bg-theme-lightgreen">Save</button>
+									</div>
+								</div>
+								:
+								<p className="h-full pt-2">{about}</p>
+
+						}
+					</form>
 				</div>
 
-				<div className='py-4 px-3'>
-					<h3 className="font-bold">Friends list</h3>
-					<ul>
-						<li>Friend 1</li>
-						<li>Friend 2</li>
-						<li>Friend 3</li>
-					</ul>
-				</div>
+				<FriendsList />
 			</section>
 		</main>
 	)
