@@ -3,7 +3,6 @@ import { useMutation } from "react-query";
 
 import { API } from "@/utils/trpc/trpc";
 import { uploadProfilePicture } from "@/core/profile/uploadProfilePicture";
-import { Spinner } from "phosphor-react";
 import ActionButton from "@/components/ActionButton";
 
 /**
@@ -117,7 +116,7 @@ const PfpSelectorComponent: React.FC<PfpSelectorComponentProps> = ({
 	 * File input state handler.
 	 */
 	const [selectedImage, setSelectedImage] = useState<File | null>(null);
-	const [isImageSaved, setIsImageSaved] = useState(true);
+	const [isQuerying, setIsQuerying] = useState(false);
 
 	/**
 	 * File input event handler.
@@ -138,10 +137,10 @@ const PfpSelectorComponent: React.FC<PfpSelectorComponentProps> = ({
 		 * If the image is successfully saved, we reset the HTMLInputElement's state.
 		 */
 		if (selectedImage) {
-			setIsImageSaved(false);
+			setIsQuerying(true);
 			const isImageSaved = await onSaveButtonPressed(selectedImage);
 			if (isImageSaved) {
-				setIsImageSaved(true);
+				setIsQuerying(false);
 				setSelectedImage(null);
 			}
 		}
@@ -164,15 +163,16 @@ const PfpSelectorComponent: React.FC<PfpSelectorComponentProps> = ({
 
 				{/** Save Button */}
 				<ActionButton
-					success={isImageSaved}
+					success={!isQuerying}
 					onActionButtonPressed={_onSaveButtonPressed}
-					className="flex-1 mb-4 px-1 py-1 sm:mt-3 bg-theme-green hover:bg-green-500 rounded-lg text-white"
+					className="flex-1 mb-4 px-1 py-1 sm:mt-3 bg-theme-green hover:bg-green-500 rounded-lg text-white disabled:bg-gray-400"
 				/>
 
 				{/** Cancel Button */}
 				<button
-					className="flex-1 mb-4 px-1 py-1 sm:mt-3 bg-red-700 rounded-lg text-white hover:bg-red-500"
+					className="flex-1 mb-4 px-1 py-1 sm:mt-3 bg-red-700 rounded-lg text-white hover:bg-red-500 disabled:bg-gray-400"
 					onClick={_onCancelButtonPressed}
+					disabled={isQuerying}
 				>Cancel</button>
 			</div>
 		)

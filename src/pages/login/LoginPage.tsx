@@ -1,19 +1,60 @@
+import React, { useEffect, useRef } from "react";
+
 import { useNavigate } from "react-router";
+import { useForm, SubmitHandler } from 'react-hook-form'
 
 import { storeCredentials, storeUid } from "@/utils/credentialManager";
 import { API } from "@/utils/trpc/trpc";
-
-import { useState } from "react";
 import ActionButton from "@/components/ActionButton";
 import { TRPCClientError } from "@trpc/client";
 
+type LoginFormValues = {
+	email: string
+	password: string
+}
+
 /**
- * Login component handler. Handles the callback functions and some initial data requests.
- * 
+ * LoginPage.
  */
 const LoginPage: React.FC = () => {
 	// TODO: check if User already has existing valid credentials
 	const navigator = useNavigate();
+
+	const { register, handleSubmit, setError, formState } = useForm<LoginFormValues>();
+	
+	const onSubmit: SubmitHandler<LoginFormValues> = async (data) => await onLoginButtonPressed(data);
+
+	const {ref: emailHookRef, ...emailHook} = register("email", {
+		required: {
+			value: true,
+			message: "Email field empty."
+		},
+	})
+	const {ref: passwordHookRef, ...passwordHook} = register("password", {
+		required: {
+			value: true,
+			message: "Password field empty."
+		},
+	})
+
+	const emailRef = useRef<HTMLInputElement | null>(null);
+	const passwordRef = useRef<HTMLInputElement | null>(null);
+
+	useEffect(() => {
+
+	}, [passwordRef.current?.validity])
+
+	function onEmailEnterPressed(event: React.KeyboardEvent<HTMLInputElement>) {
+		if (event.key === 'Enter' && passwordRef.current) {
+			passwordRef.current.focus();
+		}
+	}
+
+	async function onPasswordEnterPressed(event: React.KeyboardEvent<HTMLInputElement>) {
+		if (event.key === 'Enter') {
+			await handleSubmit(onSubmit)()
+		}
+	}
 
 	/**
 	 * tRPC mutation for logging in the User.
@@ -33,53 +74,32 @@ const LoginPage: React.FC = () => {
 		}
 	});
 
-	// Call the tRPC mutation.
-	async function onLoginButtonPressed(email: string, password: string) {
+	async function onLoginButtonPressed(data: { email: string, password: string }) {
 		try {
-			await login.mutateAsync({ email: email, password: password });
+			await login.mutateAsync(data);
 		} catch (error) {
+			if (error instanceof TRPCClientError) {
+				handleLoginErrors(error.message)
+			}
 		}
 	}
 
-	return (
-		<LoginComponent
-			onLoginButtonPressed={onLoginButtonPressed}
-		/>
-	);
-}
-
-
-
-interface LoginComponentProps {
-	onLoginButtonPressed?: (email: string, password: string) => Promise<void>
-}
-
-/**
- * Component wrapper for LoginPage.
- * @param onLoginButtonPressed Callback function for when the Login button is pressed. 
- */
-const LoginComponent: React.FC<LoginComponentProps> = ({
-	onLoginButtonPressed
-}) => {
-	const [emailField, setEmailField] = useState("");
-	const [passwordField, setPasswordField] = useState("");
-	const [isQuerying, setIsQuerying] = useState(true);
-
-	function onEmailChanged(event: React.ChangeEvent<HTMLInputElement>) {
-		const { value } = event.target;
-		setEmailField(value);
-	}
-
-	function onPasswordChanged(event: React.ChangeEvent<HTMLInputElement>) {
-		const { value } = event.target;
-		setPasswordField(value);
-	}
-
-	async function _onLoginButtonPressed() {
-		if (onLoginButtonPressed) {
-			setIsQuerying(false)
-			await onLoginButtonPressed(emailField, passwordField)
-			setIsQuerying(true)
+	function handleLoginErrors(errorMessage: string) { 
+		switch(errorMessage) {
+			case "auth/user-not-found":
+				setError('email', {
+					type: "custom",
+					message: "Email not found."
+				});
+				break
+			case "auth/wrong-password":
+				setError('password', {
+					type: "custom",
+					message: "Invalid password."
+				});
+				break
+			default:
+				break
 		}
 	}
 
@@ -94,6 +114,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
 						alt="ChatApp logo">
 					</img>
 				</div>
+
 				{/* Right area */}
 				<div className="flex justify-center items-center text-center bg-theme-darkgreen">
 					<div className="flex flex-col py-8 mx-5 h-full justify-center">
@@ -104,28 +125,30 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
 							alt="Logo"
 						></img>
 						<span className="pl-1.5 text-3xl text-white font-bold sm:block md:hidden ml-auto">ChatBox</span>
-						<p className="md:mt-auto sm:mt-2 text-left text-green-700 text-sm font-semibold">Email Address</p>
+						<span className={`md:mt-auto sm:mt-2 text-left text-green-700 text-sm font-semibold ${(!emailRef.current?.reportValidity() && "mb-2")}`}>Email Address</span>
+						{emailRef.current?.reportValidity() && <span className="mr-auto text-rose-500 text-xs p-1 pt-0">{formState.errors.email?.message}</span>}
 						<input type="email"
-							className="text-sm md:mt-2 sm:mt-1 mb-2 p-2 rounded-lg md:w-64"
+							className="text-sm mb-2 p-2 rounded-lg w-64 focus:outline-none invalid:outline-red-400"
 							placeholder="Email Address..."
-							name="email"
-							onChange={onEmailChanged}
-							value={emailField}
+							onKeyDown={onEmailEnterPressed}
+							ref={(e) => {emailHookRef(e); emailRef.current = e;}}
+							{...emailHook}
 						></input>
-						<p className="sm:mt-2 text-left text-green-700 text-sm font-semibold">Password</p>
+						<span className={`sm:mt-2 text-left text-green-700 text-sm font-semibold ${(!passwordRef.current?.reportValidity() && "mb-2")}`}>Password</span>
+						{passwordRef.current?.reportValidity() && <span className="mr-auto text-rose-500 text-xs p-1 pt-0">{formState.errors.password?.message}</span>}
 						<input type="password"
-							className="text-sm mb-2 p-2 rounded-lg w-64"
+							className="text-sm mb-2 p-2 rounded-lg max-w-64 focus:outline-none invalid:outline-red-400 invalid:outline-solid"
 							placeholder="Password..."
-							name="password"
-							onChange={onPasswordChanged}
-							value={passwordField}
+							onKeyDown={onPasswordEnterPressed}
+							ref={(e) => {passwordHookRef(e); passwordRef.current = e;}}
+							{...passwordHook}
 						></input>
 						<ActionButton
 							actionLabel="Login"
 							loadingLabel="Loading..."
-							success={isQuerying}
-							onActionButtonPressed={_onLoginButtonPressed}
-							className="mb-3 ml-auto py-1 px-4 text-white bg-theme-green rounded-lg font-bold hover:bg-green-500"
+							success={!formState.isSubmitting}
+							onActionButtonPressed={handleSubmit(onSubmit)}
+							className="mb-3 ml-auto py-1 px-4 text-white bg-theme-green rounded-lg font-bold hover:bg-green-500 disabled:bg-gray-400"
 						/>
 						<a
 							className="text-gray-300 mb-auto ml-auto text-xs text-theme-green hover:text-green-400 transition"

@@ -13,7 +13,7 @@ function RegisterPage() {
 	// TODO: check if User already has existing valid credentials
 
 	const navigator = useNavigate()
-	
+
 	/**
 	 * tRPC mutation for logging in the User.
 	 */
@@ -42,12 +42,12 @@ function RegisterPage() {
 	// Call the tRPC mutation.
 	async function onRegisterButtonPressed(email: string, username: string, password: string) {
 		try {
-			await register.mutateAsync({email: email, username: username, password: password})
-		} catch (error) {}
+			await register.mutateAsync({ email: email, username: username, password: password })
+		} catch (error) { }
 	}
 
 	return (
-		<RegisterComponent 
+		<RegisterComponent
 			onRegisterButtonPressed={onRegisterButtonPressed}
 		/>
 	)
@@ -83,9 +83,9 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({
 	}
 
 	return (
-		<main className="Login">
+		<main className="Login w-full">
 			<section className="grid grid-cols-1 md:grid-cols-2">
-
+				{/* Left area */}
 				<div className="md:grid items-center justify-center hidden">
 					<img
 						className="w-64 h-64"
@@ -94,6 +94,7 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({
 					</img>
 				</div>
 
+				{/* Right area */}
 				<div className="flex justify-center items-center text-center bg-theme-darkgreen">
 					<div className="flex flex-col py-8 mx-5 h-full justify-center">
 						{/* Chatbox logo visible only on mobile */}
@@ -105,23 +106,23 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({
 						<span className="pl-1.5 text-3xl text-white font-bold sm:block md:hidden ml-auto">Register</span>
 						<p className="md:mt-auto sm:mt-2 text-left text-green-700 text-sm font-semibold">Email Address</p>
 						<input type="email"
-							className="text-sm md:mt-2 sm:mt-1 mb-2 p-2 rounded-lg md:w-64"
+							className="text-sm md:mt-2 sm:mt-1 mb-2 p-2 rounded-lg w-64 focus:outline-none"
 							placeholder="Email Address..."
 							name="email"
 							onChange={onEmailChanged}
 							value={emailField}
 						></input>
-						<p className="text-left text-green-700 text-sm font-semibold md:w-64">Username</p>
+						<p className="sm:mt-2 text-left text-green-700 text-sm font-semibold">Username</p>
 						<input type="username"
-							className="text-sm mb-2 p-2 rounded-lg"
+							className="text-sm md:mt-2 sm:mt-1 mb-2 p-2 rounded-lg w-64 focus:outline-none"
 							placeholder="Username..."
 							name="username"
 							onChange={onUsernameChanged}
 							value={usernameField}
 						></input>
-						<p className="text-left text-green-700 text-sm font-semibold md:w-64">Username</p>
+						<p className="sm:mt-2 text-left text-green-700 text-sm font-semibold">Username</p>
 						<input type="password"
-							className="text-sm mb-2 p-2 rounded-lg"
+							className="text-sm md:mt-2 sm:mt-1 mb-2 p-2 rounded-lg w-64 focus:outline-none"
 							placeholder="Password..."
 							name="password"
 							onChange={onPasswordChanged}

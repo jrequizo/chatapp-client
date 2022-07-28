@@ -125,7 +125,7 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 						<div className="h-full flex grow flex-col p-2">
 							{/** content */}
 							<div className="h-full">
-								<textarea className="border-solid border h-full w-full resize-none" ref={textAreaRef} value={aboutText} onChange={onAboutChanged} />
+								<textarea className="border-solid border h-full w-full resize-none focus:outline-none p-2" ref={textAreaRef} value={aboutText} onChange={onAboutChanged} />
 							</div>
 							{/** ui */}
 							<div className="flex flex-row-reverse gap-x-2">
@@ -138,7 +138,7 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 								<ActionButton
 									success={isAboutUpdated}
 									onActionButtonPressed={_onSaveButtonPressed}
-									className="mb-4 px-1 py-1 sm:mt-3 bg-theme-green hover:bg-green-500 rounded-lg text-white"
+									className="mb-4 px-1 py-1 sm:mt-3 bg-theme-green hover:bg-green-500 rounded-lg text-white disabled:bg-gray-400"
 								/>
 							</div>
 						</div> :
