@@ -36,16 +36,18 @@ const RegisterPage: React.FC = () => {
 	 */
 	const registerMutation = API.useMutation(["account.register"], {
 		onSuccess(data) {
-			// Cahe User credentials
-			storeCredentials({
-				jwt: data.jwt,
-				refreshToken: data.refreshToken,
-				userObject: data.user
-			})
-			storeUid(data.uid)
+			if (data) {
+				// Cache User credentials
+				storeCredentials({
+					jwt: data.jwt,
+					refreshToken: data.refreshToken,
+					userObject: data.user
+				})
+				storeUid(data.uid)
 
-			// Navigate to Chat
-			navigator("/")
+				// Navigate to Chat
+				navigator("/")
+			}
 		},
 	})
 
@@ -220,7 +222,7 @@ const RegisterPage: React.FC = () => {
 							loadingLabel="Registering..."
 							success={!isSubmitting}
 							onActionButtonPressed={async () => {
-								const isValidForm = await trigger(["email", "username", "password"], {shouldFocus: false})
+								const isValidForm = await trigger(["email", "username", "password"], { shouldFocus: false })
 								if (isValidForm) handleSubmit(onSubmit)()
 							}}
 							className="mb-auto ml-auto py-1 px-4 text-white bg-theme-green rounded-lg font-bold hover:bg-green-500"

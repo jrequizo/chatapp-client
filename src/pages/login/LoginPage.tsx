@@ -25,7 +25,7 @@ const LoginPage: React.FC = () => {
 	const passwordRef = useRef<HTMLInputElement | null>(null);
 
 	const { register, handleSubmit, setError, formState } = useForm<LoginFormValues>();
-	
+
 	const onSubmit: SubmitHandler<LoginFormValues> = async (data) => await onLoginButtonPressed(data);
 
 	/**
@@ -33,26 +33,28 @@ const LoginPage: React.FC = () => {
 	 */
 	const login = API.useMutation(["auth.login"], {
 		onSuccess(data) {
-			// Cache User credentials
-			storeCredentials({
-				jwt: data.jwt,
-				refreshToken: data.refreshToken,
-				userObject: data.user
-			});
-			storeUid(data.uid);
+			if (data) {
+				// Cache User credentials
+				storeCredentials({
+					jwt: data.jwt,
+					refreshToken: data.refreshToken,
+					userObject: data.user
+				});
+				storeUid(data.uid);
 
-			// Navigate to Chat
-			navigator("/");
+				// Navigate to Chat
+				navigator("/");
+			}
 		}
 	});
 
-	const {ref: emailHookRef, ...emailHook} = register("email", {
+	const { ref: emailHookRef, ...emailHook } = register("email", {
 		required: {
 			value: true,
 			message: "Email field empty."
 		},
 	})
-	const {ref: passwordHookRef, ...passwordHook} = register("password", {
+	const { ref: passwordHookRef, ...passwordHook } = register("password", {
 		required: {
 			value: true,
 			message: "Password field empty."
@@ -90,8 +92,8 @@ const LoginPage: React.FC = () => {
 	/**
 	 * 
 	 */
-	function handleLoginErrors(errorMessage: string) { 
-		switch(errorMessage) {
+	function handleLoginErrors(errorMessage: string) {
+		switch (errorMessage) {
 			case "auth/user-not-found":
 				setError('email', {
 					type: "custom",
@@ -133,20 +135,21 @@ const LoginPage: React.FC = () => {
 						<span className="pl-1.5 text-3xl text-white font-bold sm:block md:hidden ml-auto">ChatBox</span>
 						<span className={`md:mt-auto sm:mt-2 text-left text-green-700 text-sm font-semibold ${(!emailRef.current?.reportValidity() && "mb-2")}`}>Email Address</span>
 						{emailRef.current?.reportValidity() && <span className="mr-auto text-rose-500 text-xs p-1 pt-0">{formState.errors.email?.message}</span>}
-						<input type="email"
+						<input
 							className="text-sm mb-2 p-2 rounded-lg w-64 focus:outline-none invalid:outline-red-400"
 							placeholder="Email Address..."
 							onKeyDown={onEmailEnterPressed}
-							ref={(e) => {emailHookRef(e); emailRef.current = e;}}
+							ref={(e) => { emailHookRef(e); emailRef.current = e; }}
 							{...emailHook}
 						></input>
 						<span className={`sm:mt-2 text-left text-green-700 text-sm font-semibold ${(!passwordRef.current?.reportValidity() && "mb-2")}`}>Password</span>
 						{passwordRef.current?.reportValidity() && <span className="mr-auto text-rose-500 text-xs p-1 pt-0">{formState.errors.password?.message}</span>}
-						<input type="password"
+						<input
+							type="password"
 							className="text-sm mb-2 p-2 rounded-lg max-w-64 focus:outline-none invalid:outline-red-400 invalid:outline-solid"
 							placeholder="Password..."
 							onKeyDown={onPasswordEnterPressed}
-							ref={(e) => {passwordHookRef(e); passwordRef.current = e;}}
+							ref={(e) => { passwordHookRef(e); passwordRef.current = e; }}
 							{...passwordHook}
 						></input>
 						<ActionButton

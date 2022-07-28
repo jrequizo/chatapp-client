@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 
 import { API } from "@/utils/trpc/trpc";
-import { setFlagsFromString } from "v8";
 import ActionButton from "@/components/ActionButton";
 
 interface UserAboutProps {
@@ -74,12 +73,14 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 
 	/**
 	 * Passes focus to the textarea when the `Edit` text button is pressed.
+	 * We only want this to trigger when isEditorVisible is first set to true.
 	 */
 	useEffect(() => {
 		if (isEditorVisible) {
 			focusTextArea();
 		}
-	}, [isEditorVisible, focusTextArea])
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isEditorVisible])
 
 	/**
 	 * Updates the state when the `about` prop is regenerated.
