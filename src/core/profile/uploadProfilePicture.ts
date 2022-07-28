@@ -1,19 +1,16 @@
-import { getJwt, getUid } from "@/utils/credentialManager";
+import { getJwt } from "@/utils/credentialManager";
 
-const apiUrl = process.env.PUBLIC_URL ?? "http://localhost:3001"
+const url = process.env.NODE_ENV === 'development' ? 'http://localhost:3001/api/express' : `${process.env.PUBLIC_URL}/api/express`;
 
 export async function uploadProfilePicture(image: File) {
 	const jwt = getJwt()
-	const uid = getUid()
 
 	const formData = new FormData();
 
 	formData.append('pfp', image);
 
-	console.log(image)
-
 	const response = await fetch(
-		apiUrl + `/api/express/profile/${uid}/upload`,
+		`${url}/profile/upload`,
 		{
 			method: "POST",
 			headers: {

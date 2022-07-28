@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 // import './NoPage.css'
 
@@ -10,4 +10,4 @@ function NoPage() {
   );
 }
 
-export default NoPage
+export default NoPage;
