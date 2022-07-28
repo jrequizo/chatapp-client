@@ -1,72 +1,114 @@
-import { useNavigate } from "react-router";
+import React, { useRef } from "react";
 
-import { storeCredentials, storeUid } from "@/utils/credentialManager";
+import { useNavigate } from "react-router";
+import { useForm, SubmitHandler } from 'react-hook-form'
+
+import { TRPCClientError } from "@trpc/client";
 import { API } from "@/utils/trpc/trpc";
 
-import { useState } from "react";
+import { storeCredentials, storeUid } from "@/utils/credentialManager";
+import ActionButton from "@/components/ActionButton";
+
+type LoginFormValues = {
+	email: string
+	password: string
+}
 
 /**
- * Login component handler. Handles the callback functions and some initial data requests.
- * 
+ * LoginPage.
  */
 const LoginPage: React.FC = () => {
 	// TODO: check if User already has existing valid credentials
 	const navigator = useNavigate();
-	
+
+	const emailRef = useRef<HTMLInputElement | null>(null);
+	const passwordRef = useRef<HTMLInputElement | null>(null);
+
+	const { register, handleSubmit, setError, formState } = useForm<LoginFormValues>();
+
+	const onSubmit: SubmitHandler<LoginFormValues> = async (data) => await onLoginButtonPressed(data);
+
 	/**
 	 * tRPC mutation for logging in the User.
 	 */
 	const login = API.useMutation(["auth.login"], {
 		onSuccess(data) {
-			// Cahe User credentials
-			storeCredentials({
-				jwt: data.jwt,
-				refreshToken: data.refreshToken,
-				userObject: data.user
-			});
-			storeUid(data.uid);
+			if (data) {
+				// Cache User credentials
+				storeCredentials({
+					jwt: data.jwt,
+					refreshToken: data.refreshToken,
+					userObject: data.user
+				});
+				storeUid(data.uid);
 
-			// Navigate to Chat
-			navigator("/");
+				// Navigate to Chat
+				navigator("/");
+			}
+		}
+	});
+
+	const { ref: emailHookRef, ...emailHook } = register("email", {
+		required: {
+			value: true,
+			message: "Email field empty."
+		},
+	})
+	const { ref: passwordHookRef, ...passwordHook } = register("password", {
+		required: {
+			value: true,
+			message: "Password field empty."
 		},
 	})
 
-	// Call the tRPC mutation.
-	async function onLoginButtonPressed(email: string, password: string) {
-		login.mutate({email: email, password: password});
+	/**
+	 * Handlers for auto-moving focus from Input elements when `Enter` key is pressed.
+	 */
+	function onEmailEnterPressed(event: React.KeyboardEvent<HTMLInputElement>) {
+		if (event.key === 'Enter' && passwordRef.current) {
+			passwordRef.current.focus();
+		}
+	}
+	async function onPasswordEnterPressed(event: React.KeyboardEvent<HTMLInputElement>) {
+		if (event.key === 'Enter') {
+			// No other elements to focus on, act as a pseudo-submit action
+			await handleSubmit(onSubmit)()
+		}
 	}
 
-	return (
-		<LoginComponent 
-			onLoginButtonPressed={onLoginButtonPressed}
-		/>
-	);
-}
-
-
-
-interface LoginComponentProps {
-	onLoginButtonPressed?: (email: string, password: string) => void
-}
-
-/**
- * Component wrapper for LoginPage.
- * @param onLoginButtonPressed Callback function for when the Login button is pressed. 
- */
-const LoginComponent: React.FC<LoginComponentProps> = ({
-	onLoginButtonPressed
-}) => {
-	const [emailField, setEmailField] = useState("");
-	const [passwordField, setPasswordField] = useState("");
-
-	function onEmailChanged(event: React.ChangeEvent<HTMLInputElement>) {
-		const { value } = event.target;
-		setEmailField(value);
+	/**
+	 * 
+	 */
+	async function onLoginButtonPressed(data: { email: string, password: string }) {
+		try {
+			await login.mutateAsync(data);
+		} catch (error) {
+			if (error instanceof TRPCClientError) {
+				handleLoginErrors(error.message)
+			}
+		}
 	}
 
-	function onPasswordChanged(event: React.ChangeEvent<HTMLInputElement>) {
-		const { value } = event.target;
-		setPasswordField(value);
+	/**
+	 * 
+	 */
+	function handleLoginErrors(errorMessage: string) {
+		switch (errorMessage) {
+			case "auth/user-not-found":
+				setError('email', {
+					type: "custom",
+					message: "Email not found."
+				});
+				break
+			case "auth/wrong-password":
+				setError('password', {
+					type: "custom",
+					message: "Invalid password."
+				});
+				break
+			default:
+				break
+		}
 	}
 
 	return (
@@ -80,44 +122,51 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
 						alt="ChatApp logo">
 					</img>
 				</div>
+
 				{/* Right area */}
 				<div className="flex justify-center items-center text-center bg-theme-darkgreen">
-					<div className="flex flex-col py-8 px-16 mx-5 h-full justify-center w-96">
+					<div className="flex flex-col py-8 mx-5 h-full justify-center">
 						{/* Chatbox logo visible only on mobile */}
 						<img
-						className="mx-auto h-2/6 sm:block md:hidden"
-						src={`${process.env.PUBLIC_URL}/images/chatbox-logo.svg`}
-						alt="Logo"
+							className="mx-auto h-2/6 sm:block md:hidden"
+							src={`${process.env.PUBLIC_URL}/images/chatbox-logo.svg`}
+							alt="Logo"
 						></img>
-						<span className="pl-1.5 text-3xl text-white font-bold sm:block md:hidden">ChatBox</span>
-						<input type="email"
-							className="text-sm mt-4 mb-2 p-2 rounded-lg md:mt-auto"
+						<span className="pl-1.5 text-3xl text-white font-bold sm:block md:hidden ml-auto">ChatBox</span>
+						<span className={`md:mt-auto sm:mt-2 text-left text-green-700 text-sm font-semibold ${(!emailRef.current?.reportValidity() && "mb-2")}`}>Email Address</span>
+						{emailRef.current?.reportValidity() && <span className="mr-auto text-rose-500 text-xs p-1 pt-0">{formState.errors.email?.message}</span>}
+						<input
+							className="text-sm mb-2 p-2 rounded-lg w-64 focus:outline-none invalid:outline-red-400"
 							placeholder="Email Address..."
-							name="email"
-							onChange={onEmailChanged}
-							value={emailField}
+							onKeyDown={onEmailEnterPressed}
+							ref={(e) => { emailHookRef(e); emailRef.current = e; }}
+							{...emailHook}
 						></input>
-						<input type="password"
-							className="text-sm mb-2 p-2 rounded-lg"
+						<span className={`sm:mt-2 text-left text-green-700 text-sm font-semibold ${(!passwordRef.current?.reportValidity() && "mb-2")}`}>Password</span>
+						{passwordRef.current?.reportValidity() && <span className="mr-auto text-rose-500 text-xs p-1 pt-0">{formState.errors.password?.message}</span>}
+						<input
+							type="password"
+							className="text-sm mb-2 p-2 rounded-lg max-w-64 focus:outline-none invalid:outline-red-400 invalid:outline-solid"
 							placeholder="Password..."
-							name="password"
-							onChange={onPasswordChanged}
-							value={passwordField}
+							onKeyDown={onPasswordEnterPressed}
+							ref={(e) => { passwordHookRef(e); passwordRef.current = e; }}
+							{...passwordHook}
 						></input>
-						<button
-							className="my-0 ml-auto text-white bg-theme-green py-1 px-4 rounded-lg my-2 text-1xl font-bold hover:bg-green-600 transition"
-							onClick={() => {
-								onLoginButtonPressed && onLoginButtonPressed(emailField, passwordField)
-							}}
-						>Login</button>
+						<ActionButton
+							actionLabel="Login"
+							loadingLabel="Loading..."
+							success={!formState.isSubmitting}
+							onActionButtonPressed={handleSubmit(onSubmit)}
+							className="mb-3 ml-auto py-1 px-4 text-white bg-theme-green rounded-lg font-bold hover:bg-green-500 disabled:bg-gray-400"
+						/>
 						<a
-							className="text-gray-300 mb-auto ml-auto text-xs hover:text-green-600 hover:underline"
+							className="text-gray-300 mb-auto ml-auto text-xs text-theme-green hover:text-green-400 transition"
 							href="/under-construction"
 						>Forgot your password?</a>
 						<div
 							className="text-white py-4"
 						>Don't have an account? Click <a
-							className="text-theme-green hover:text-theme-lightgreen hover:underline"
+							className="text-theme-green hover:text-green-400 transition"
 							href="/register"
 						>here</a>
 						</div>

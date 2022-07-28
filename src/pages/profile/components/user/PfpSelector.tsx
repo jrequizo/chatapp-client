@@ -3,6 +3,7 @@ import { useMutation } from "react-query";
 
 import { API } from "@/utils/trpc/trpc";
 import { uploadProfilePicture } from "@/core/profile/uploadProfilePicture";
+import ActionButton from "@/components/ActionButton";
 
 /**
  * React Element state handler.
@@ -51,7 +52,7 @@ const PfpSelector: React.FC<PfpSelectorProps> = ({
 	 */
 	async function saveButtonPressed(image: File) {
 		const response = await uploadPfpMutation.mutateAsync(image)
-		
+
 		return response.status === 201;
 	}
 
@@ -102,7 +103,7 @@ const PfpSelector: React.FC<PfpSelectorProps> = ({
  */
 interface PfpSelectorComponentProps {
 	onImageSelected: (imageUrl: string) => void
-	onSaveButtonPressed: (image: File) => Promise<boolean> 
+	onSaveButtonPressed: (image: File) => Promise<boolean>
 	onCancelButtonPressed: React.MouseEventHandler<HTMLButtonElement>
 }
 
@@ -115,6 +116,7 @@ const PfpSelectorComponent: React.FC<PfpSelectorComponentProps> = ({
 	 * File input state handler.
 	 */
 	const [selectedImage, setSelectedImage] = useState<File | null>(null);
+	const [isQuerying, setIsQuerying] = useState(false);
 
 	/**
 	 * File input event handler.
@@ -135,8 +137,10 @@ const PfpSelectorComponent: React.FC<PfpSelectorComponentProps> = ({
 		 * If the image is successfully saved, we reset the HTMLInputElement's state.
 		 */
 		if (selectedImage) {
+			setIsQuerying(true);
 			const isImageSaved = await onSaveButtonPressed(selectedImage);
 			if (isImageSaved) {
+				setIsQuerying(false);
 				setSelectedImage(null);
 			}
 		}
@@ -156,17 +160,19 @@ const PfpSelectorComponent: React.FC<PfpSelectorComponentProps> = ({
 		 */
 		return (
 			<div className="flex gap-x-3">
-				
+
 				{/** Save Button */}
-				<button
-					className="flex-1 mb-4 px-1 py-1 sm:mt-3 bg-theme-darkgreen rounded-lg text-white hover:bg-theme-lightgreen"
-					onClick={_onSaveButtonPressed}
-				>Save</button>
+				<ActionButton
+					success={!isQuerying}
+					onActionButtonPressed={_onSaveButtonPressed}
+					className="flex-1 mb-4 px-1 py-1 sm:mt-3 bg-theme-green hover:bg-green-500 rounded-lg text-white disabled:bg-gray-400"
+				/>
 
 				{/** Cancel Button */}
 				<button
-					className="flex-1 mb-4 px-1 py-1 sm:mt-3 bg-red-700 rounded-lg text-white hover:bg-red-500"
+					className="flex-1 mb-4 px-1 py-1 sm:mt-3 bg-red-700 rounded-lg text-white hover:bg-red-500 disabled:bg-gray-400"
 					onClick={_onCancelButtonPressed}
+					disabled={isQuerying}
 				>Cancel</button>
 			</div>
 		)
@@ -178,7 +184,7 @@ const PfpSelectorComponent: React.FC<PfpSelectorComponentProps> = ({
 		return (
 			<label className="mb-4 px-1 py-1 sm:mt-3 bg-blue-600 hover:bg-blue-400 rounded-lg text-white text-center">
 				Change Picture
-				<input type="file" accept=".jpg,.jpeg,.png" className="hidden" onChange={onInputChanged}/>
+				<input type="file" accept=".jpg,.jpeg,.png" className="hidden" onChange={onInputChanged} />
 			</label>
 		)
 	}

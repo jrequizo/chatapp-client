@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { PaperPlaneRight } from "phosphor-react";
 
 import ChatProperties from "@/types/ChatProperties";
@@ -24,16 +24,18 @@ const Chatbox: React.FC<ChatboxProps> = ({
 	properties,
 	onSendMessage,
 	messageHandler
-}) => {
+}: ChatboxProps) => {
 	messageHandler.bindOnMessage(onMessageReceived)
 
 	const [messages, setMessages] = useState<ChatMessage[]>([]);
 	const [messageInput, setMessageInput] = useState("");
 
+	const chatInputRef = useRef<HTMLInputElement>(null);
+
 	/**
 	 * Retrieve last `length` messages (or default of 20) from API.
 	 */
-	
+
 	//  const messagesQuery = API.useQuery(["chat.chatHistory", {
 	API.useQuery(["chat.chatHistory", {
 		chatId: properties?.chatId,
@@ -45,12 +47,16 @@ const Chatbox: React.FC<ChatboxProps> = ({
 		},
 	})
 
+	useEffect(() => {
+		chatInputRef.current?.focus();
+	}, [properties])
+
 	/**
 	 * Callback fired when a KeyboardEvent is detected from the <input/> element
 	 * @param event 
 	 */
 	function onInputChanged(event: React.KeyboardEvent<HTMLInputElement>) {
-		const { value: message} = event.currentTarget;
+		const { value: message } = event.currentTarget;
 
 		setMessageInput(message)
 	}
@@ -96,12 +102,21 @@ const Chatbox: React.FC<ChatboxProps> = ({
 						/**
 						 * Create Message components
 						 */
-						messages.map((message) => <ChatMessageComponent messageDetails={message}/>)
+						messages.map((message) => <ChatMessageComponent messageDetails={message} />)
 					}
 				</div>
 
 				<div className="flex grow-0 basis-px w-full h-16 items-center p-2">
-					<input className="rounded-3xl border-none w-full pl-4 h-9 text-5 text-slate-700" type="text" placeholder="Aa" onChange={onInputChanged} onKeyDown={onInputEnterKeyPressed} value={messageInput}/>
+					<input
+						className="rounded-3xl border-none w-full pl-4 h-9 text-5 text-slate-700 focus:outline-none"
+						type="text"
+						placeholder="Aa"
+						onChange={onInputChanged}
+						onKeyDown={onInputEnterKeyPressed}
+						value={messageInput}
+						autoFocus={true}
+						ref={chatInputRef}
+					/>
 					<button className="p-0 pr-6 bg-transparent" onClick={onSendButtonPressed}>
 						<PaperPlaneRight size={44} weight="fill" color="#cbd5e1" className="chatbox-input-button-icon" />
 					</button>

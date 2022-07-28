@@ -6,13 +6,15 @@ import { io, Socket } from 'socket.io-client';
 import { getCredentials, getUid, storeProfile } from "@/utils/credentialManager";
 import { API } from "@/utils/trpc/trpc";
 
-import ProfileData from "@/types/ProfileData";
 import ChatProperties from "@/types/ChatProperties";
 
-import ChatComponent from "./components/ChatComponent";
-import MessageHandler from "./MessageHandler";
+import Navbar from "@/components/Navbar/Navbar";
 
-function Chat() {
+import MessageHandler from "./MessageHandler";
+import Chatbox from "./components/ChatboxComponent";
+import ChatNavigationButton from "./components/ChatNavigationButtonComponent";
+
+const ChatPage: React.FC = () => {
 	const navigator = useNavigate()
 
 	// Retrieve credentials from localStore. The jwt will be passed into the authorization context for connecting with the Chat server.
@@ -27,11 +29,6 @@ function Chat() {
 	// Retrieve uid from localStore. This will be used to retrieve the profile information of the User.
 	const [currentUid] = useState(getUid());
 
-	/**
-	 * Retrieve public profile data for the current User.
-	 */
-	const [profileData, setProfileData] = useState<ProfileData | null>(null)
-
 	// Retrieve the User's public profile information
 	// const profileQuery = API.useQuery(["profile.profileData", { uid: currentUid! }], {
 	API.useQuery(["profile.profileData", { uid: currentUid! }], {
@@ -39,9 +36,6 @@ function Chat() {
 		onSuccess(data) {
 			// Cache the User's profile information
 			storeProfile(data)
-
-			// Re-render the Chat component with newly retrieved information
-			setProfileData(data)
 		},
 	})
 
@@ -157,7 +151,6 @@ function Chat() {
 	return (
 		// TODO: pass props
 		<ChatComponent
-			profileData={profileData}
 			onSendMessage={onSendMessage}
 			onChatNavigationButtonPressed={onChatNavigationButtonPressed}
 			publicChats={publicChatData}
@@ -166,4 +159,114 @@ function Chat() {
 	)
 }
 
-export default Chat
+/**
+ * Component
+ */
+interface ChatComponentProps {
+	// The public chats to display in the navigator.
+	onSendMessage: (message: string) => void
+
+	// Callback handler for when the User presses enter or presses the send button on the chat.
+	onChatNavigationButtonPressed: (event: React.MouseEvent<HTMLButtonElement>) => void
+
+	// Callback handler for when the User selects a Chat on the left sidebar.
+	publicChats: Array<ChatProperties>
+
+	/**
+	 * onMessage callback handler, fires the attached callback when a new message is received
+	 * from the Socket.IO client.
+	 */
+	messageHandler: MessageHandler
+}
+
+/**
+ * Component wrapper for ChatPage.
+ * @param {ChatComponentProps} ChatComponentProps
+ * 
+ * Properties:
+ * * `profileData` The User's public profile data.
+ * * `publicChats` The public chats to display in the navigator.
+ * * `onSendMessage` Callback handler for when the User presses enter or presses the send button on the chat.
+ * * `onChatNavigationButtonPressed` Callback handler for when the User selects a Chat on the left sidebar.
+ * * `messageHandler` onMessage callback handler, fires the attached callback when a new message is received from the Socket.IO client.
+ * @returns ChatComponent
+ */
+const ChatComponent: React.FC<ChatComponentProps> = ({
+	// The public chats to display in the navigator.
+	publicChats,
+
+	// Callback handler for when the User presses enter or presses the send button on the chat.
+	onSendMessage,
+
+	// Callback handler for when the User selects a Chat on the left sidebar.
+	onChatNavigationButtonPressed,
+
+	/**
+	 * onMessage callback handler, fires the attached callback when a new message is received
+	 * from the Socket.IO client.
+	 */
+	messageHandler
+}: ChatComponentProps) => {
+	// State for currently selected Chat.
+	const [activeChat, setActiveChat] = useState(0)
+
+	/**
+	 * Create the JSX.Element[] props for the Chat buttons on the left navigation panel.
+	 */
+	const chatNavigationButtons = publicChats.map((property, index) => {
+		let selected = publicChats[activeChat];
+		return <ChatNavigationButton
+			chatName={property.chatName}
+			name={index.toString()}
+			key={property.chatId}
+			active={selected.chatId === property.chatId}
+			onClick={_onChatNavigationButtonPressed}
+		/>
+	})
+
+	/**
+	 * Update the local state of which Chat is selected then pass the callback back up the component tree.
+	 * @param event 
+	 */
+	function _onChatNavigationButtonPressed(event: React.MouseEvent<HTMLButtonElement>) {
+		const { name: index } = event.currentTarget;
+
+		setActiveChat(parseInt(index))
+
+		// Call the provided callback.
+		onChatNavigationButtonPressed(event);
+	}
+
+	return (
+		<main className="Chat">
+			<Navbar />
+			<section>
+				<div className="flex w-72 bg-slate-300">
+					<div className="flex flex-col">
+						<div className="flex">
+							<button className="flex-1 font-bold bg-slate-200 hover:cursor-not-allowed text-gray-400">Private</button>
+							<button className="flex-1 font-bold text-gray-400">Public</button>
+						</div>
+						<div className="w-72 grow basis-0">
+							<h3 className="font-normal p-2">-Rooms</h3>
+							<div className="h-full m-3">
+								{
+									chatNavigationButtons
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="flex flex-1 bg-slate-200">
+					<Chatbox
+						onSendMessage={onSendMessage}
+						messageHandler={messageHandler}
+						properties={publicChats[activeChat]}
+					/>
+				</div>
+			</section>
+		</main>
+	)
+}
+
+export default ChatPage
