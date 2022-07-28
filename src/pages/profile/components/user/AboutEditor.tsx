@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 
 import { API } from "@/utils/trpc/trpc";
 
@@ -62,24 +62,28 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 	 */
 	const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
+	const focusTextArea = useCallback(() => { 
+		if (textAreaRef) {
+			textAreaRef.current?.focus();
+			textAreaRef.current?.setSelectionRange(aboutText.length, aboutText.length);
+		}
+	}, [textAreaRef, aboutText.length]);
+
 	/**
 	 * Passes focus to the textarea when the `Edit` text button is pressed.
 	 */
 	useEffect(() => {
-		if (isEditorVisible && textAreaRef) {
-			textAreaRef.current?.focus();
-			textAreaRef.current?.setSelectionRange(aboutText.length, aboutText.length);
+		if (isEditorVisible) {
+			focusTextArea();
 		}
-	}, [isEditorVisible])
+	}, [isEditorVisible, focusTextArea])
 
 	/**
-	 * Updates the state when the prop is regenerated.
+	 * Updates the state when the `about` prop is regenerated.
 	 */
 	useEffect(() => {
-		if (aboutText !== about) {
-			setAboutText(about)
-		}
-	}, [about])
+		setAboutText(about)
+	}, [about, setAboutText])
 
 	function onAboutChanged(event: React.ChangeEvent<HTMLTextAreaElement>) {
 		const { value } = event.currentTarget;

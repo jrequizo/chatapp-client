@@ -1,5 +1,4 @@
-import { API } from "@/utils/trpc/trpc";
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 
 
 interface UserAboutProps {
