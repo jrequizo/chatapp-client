@@ -6,11 +6,11 @@ import { io, Socket } from 'socket.io-client';
 import { getCredentials, getUid, storeProfile } from "@/utils/credentialManager";
 import { API } from "@/utils/trpc/trpc";
 
-import ProfileData from "@/types/ProfileData";
 import ChatProperties from "@/types/ChatProperties";
 
-import MessageHandler from "./MessageHandler";
 import Navbar from "@/components/Navbar/Navbar";
+
+import MessageHandler from "./MessageHandler";
 import Chatbox from "./components/ChatboxComponent";
 import ChatNavigationButton from "./components/ChatNavigationButtonComponent";
 
@@ -29,11 +29,6 @@ const ChatPage: React.FC = () => {
 	// Retrieve uid from localStore. This will be used to retrieve the profile information of the User.
 	const [currentUid] = useState(getUid());
 
-	/**
-	 * Retrieve public profile data for the current User.
-	 */
-	const [profileData, setProfileData] = useState<ProfileData | null>(null)
-
 	// Retrieve the User's public profile information
 	// const profileQuery = API.useQuery(["profile.profileData", { uid: currentUid! }], {
 	API.useQuery(["profile.profileData", { uid: currentUid! }], {
@@ -41,9 +36,6 @@ const ChatPage: React.FC = () => {
 		onSuccess(data) {
 			// Cache the User's profile information
 			storeProfile(data)
-
-			// Re-render the Chat component with newly retrieved information
-			setProfileData(data)
 		},
 	})
 
