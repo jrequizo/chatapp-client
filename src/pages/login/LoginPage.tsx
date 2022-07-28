@@ -3,10 +3,11 @@ import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { useForm, SubmitHandler } from 'react-hook-form'
 
-import { storeCredentials, storeUid } from "@/utils/credentialManager";
-import { API } from "@/utils/trpc/trpc";
-import ActionButton from "@/components/ActionButton";
 import { TRPCClientError } from "@trpc/client";
+import { API } from "@/utils/trpc/trpc";
+
+import { storeCredentials, storeUid } from "@/utils/credentialManager";
+import ActionButton from "@/components/ActionButton";
 
 type LoginFormValues = {
 	email: string
@@ -20,41 +21,12 @@ const LoginPage: React.FC = () => {
 	// TODO: check if User already has existing valid credentials
 	const navigator = useNavigate();
 
-	const { register, handleSubmit, setError, formState } = useForm<LoginFormValues>();
-	
-	const onSubmit: SubmitHandler<LoginFormValues> = async (data) => await onLoginButtonPressed(data);
-
-	const {ref: emailHookRef, ...emailHook} = register("email", {
-		required: {
-			value: true,
-			message: "Email field empty."
-		},
-	})
-	const {ref: passwordHookRef, ...passwordHook} = register("password", {
-		required: {
-			value: true,
-			message: "Password field empty."
-		},
-	})
-
 	const emailRef = useRef<HTMLInputElement | null>(null);
 	const passwordRef = useRef<HTMLInputElement | null>(null);
 
-	useEffect(() => {
-
-	}, [passwordRef.current?.validity])
-
-	function onEmailEnterPressed(event: React.KeyboardEvent<HTMLInputElement>) {
-		if (event.key === 'Enter' && passwordRef.current) {
-			passwordRef.current.focus();
-		}
-	}
-
-	async function onPasswordEnterPressed(event: React.KeyboardEvent<HTMLInputElement>) {
-		if (event.key === 'Enter') {
-			await handleSubmit(onSubmit)()
-		}
-	}
+	const { register, handleSubmit, setError, formState } = useForm<LoginFormValues>();
+	
+	const onSubmit: SubmitHandler<LoginFormValues> = async (data) => await onLoginButtonPressed(data);
 
 	/**
 	 * tRPC mutation for logging in the User.
@@ -74,6 +46,37 @@ const LoginPage: React.FC = () => {
 		}
 	});
 
+	const {ref: emailHookRef, ...emailHook} = register("email", {
+		required: {
+			value: true,
+			message: "Email field empty."
+		},
+	})
+	const {ref: passwordHookRef, ...passwordHook} = register("password", {
+		required: {
+			value: true,
+			message: "Password field empty."
+		},
+	})
+
+	/**
+	 * Handlers for auto-moving focus from Input elements when `Enter` key is pressed.
+	 */
+	function onEmailEnterPressed(event: React.KeyboardEvent<HTMLInputElement>) {
+		if (event.key === 'Enter' && passwordRef.current) {
+			passwordRef.current.focus();
+		}
+	}
+	async function onPasswordEnterPressed(event: React.KeyboardEvent<HTMLInputElement>) {
+		if (event.key === 'Enter') {
+			// No other elements to focus on, act as a pseudo-submit action
+			await handleSubmit(onSubmit)()
+		}
+	}
+
+	/**
+	 * 
+	 */
 	async function onLoginButtonPressed(data: { email: string, password: string }) {
 		try {
 			await login.mutateAsync(data);
@@ -84,6 +87,9 @@ const LoginPage: React.FC = () => {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	function handleLoginErrors(errorMessage: string) { 
 		switch(errorMessage) {
 			case "auth/user-not-found":
