@@ -21,8 +21,6 @@ const ChatMessageComponent: React.FC<ChatMessageComponentProps> = ({
 	const navigate = useNavigate()
 
 	const { content, sender } = messageDetails
-	
-	console.log(sender.pfp_url)
 	/**
 	 * Retrieve the `large` version of the pfp if we are using CDN-uploaded pfp's.
 	 * If the User is uploading their own picture, then the URL will point to a File.

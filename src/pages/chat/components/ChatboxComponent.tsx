@@ -88,8 +88,6 @@ const Chatbox: React.FC<ChatboxProps> = ({
 		setMessageInput("")
 	}
 
-	console.log(messages);
-
 	return (
 		<div className="flex flex-col grow shrink w-full h-full">
 

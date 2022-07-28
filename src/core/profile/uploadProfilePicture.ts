@@ -21,9 +21,5 @@ export async function uploadProfilePicture(image: File) {
 		}
 	);
 
-	// const result = await response.json();
-
-	// console.log(result)
-
 	return response;
 }
