@@ -4,6 +4,8 @@ import { storeCredentials, storeUid } from "@/utils/credentialManager";
 import { API } from "@/utils/trpc/trpc";
 
 import { useState } from "react";
+import ActionButton from "@/components/ActionButton";
+import { TRPCClientError } from "@trpc/client";
 
 /**
  * Login component handler. Handles the callback functions and some initial data requests.
@@ -12,13 +14,13 @@ import { useState } from "react";
 const LoginPage: React.FC = () => {
 	// TODO: check if User already has existing valid credentials
 	const navigator = useNavigate();
-	
+
 	/**
 	 * tRPC mutation for logging in the User.
 	 */
 	const login = API.useMutation(["auth.login"], {
 		onSuccess(data) {
-			// Cahe User credentials
+			// Cache User credentials
 			storeCredentials({
 				jwt: data.jwt,
 				refreshToken: data.refreshToken,
@@ -28,16 +30,19 @@ const LoginPage: React.FC = () => {
 
 			// Navigate to Chat
 			navigator("/");
-		},
-	})
+		}
+	});
 
 	// Call the tRPC mutation.
 	async function onLoginButtonPressed(email: string, password: string) {
-		login.mutate({email: email, password: password});
+		try {
+			await login.mutateAsync({ email: email, password: password });
+		} catch (error) {
+		}
 	}
 
 	return (
-		<LoginComponent 
+		<LoginComponent
 			onLoginButtonPressed={onLoginButtonPressed}
 		/>
 	);
@@ -46,7 +51,7 @@ const LoginPage: React.FC = () => {
 
 
 interface LoginComponentProps {
-	onLoginButtonPressed?: (email: string, password: string) => void
+	onLoginButtonPressed?: (email: string, password: string) => Promise<void>
 }
 
 /**
@@ -58,6 +63,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
 }) => {
 	const [emailField, setEmailField] = useState("");
 	const [passwordField, setPasswordField] = useState("");
+	const [isQuerying, setIsQuerying] = useState(true);
 
 	function onEmailChanged(event: React.ChangeEvent<HTMLInputElement>) {
 		const { value } = event.target;
@@ -67,6 +73,14 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
 	function onPasswordChanged(event: React.ChangeEvent<HTMLInputElement>) {
 		const { value } = event.target;
 		setPasswordField(value);
+	}
+
+	async function _onLoginButtonPressed() {
+		if (onLoginButtonPressed) {
+			setIsQuerying(false)
+			await onLoginButtonPressed(emailField, passwordField)
+			setIsQuerying(true)
+		}
 	}
 
 	return (
@@ -82,42 +96,45 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
 				</div>
 				{/* Right area */}
 				<div className="flex justify-center items-center text-center bg-theme-darkgreen">
-					<div className="flex flex-col py-8 px-16 mx-5 h-full justify-center w-96">
+					<div className="flex flex-col py-8 mx-5 h-full justify-center">
 						{/* Chatbox logo visible only on mobile */}
 						<img
-						className="mx-auto h-2/6 sm:block md:hidden"
-						src={`${process.env.PUBLIC_URL}/images/chatbox-logo.svg`}
-						alt="Logo"
+							className="mx-auto h-2/6 sm:block md:hidden"
+							src={`${process.env.PUBLIC_URL}/images/chatbox-logo.svg`}
+							alt="Logo"
 						></img>
-						<span className="pl-1.5 text-3xl text-white font-bold sm:block md:hidden">ChatBox</span>
+						<span className="pl-1.5 text-3xl text-white font-bold sm:block md:hidden ml-auto">ChatBox</span>
+						<p className="md:mt-auto sm:mt-2 text-left text-green-700 text-sm font-semibold">Email Address</p>
 						<input type="email"
-							className="text-sm mt-4 mb-2 p-2 rounded-lg md:mt-auto"
+							className="text-sm md:mt-2 sm:mt-1 mb-2 p-2 rounded-lg md:w-64"
 							placeholder="Email Address..."
 							name="email"
 							onChange={onEmailChanged}
 							value={emailField}
 						></input>
+						<p className="sm:mt-2 text-left text-green-700 text-sm font-semibold">Password</p>
 						<input type="password"
-							className="text-sm mb-2 p-2 rounded-lg"
+							className="text-sm mb-2 p-2 rounded-lg w-64"
 							placeholder="Password..."
 							name="password"
 							onChange={onPasswordChanged}
 							value={passwordField}
 						></input>
-						<button
-							className="my-0 ml-auto text-white bg-theme-green py-1 px-4 rounded-lg my-2 text-1xl font-bold hover:bg-green-600 transition"
-							onClick={() => {
-								onLoginButtonPressed && onLoginButtonPressed(emailField, passwordField)
-							}}
-						>Login</button>
+						<ActionButton
+							actionLabel="Login"
+							loadingLabel="Loading..."
+							success={isQuerying}
+							onActionButtonPressed={_onLoginButtonPressed}
+							className="mb-3 ml-auto py-1 px-4 text-white bg-theme-green rounded-lg font-bold hover:bg-green-500"
+						/>
 						<a
-							className="text-gray-300 mb-auto ml-auto text-xs hover:text-green-600 hover:underline"
+							className="text-gray-300 mb-auto ml-auto text-xs text-theme-green hover:text-green-400 transition"
 							href="/under-construction"
 						>Forgot your password?</a>
 						<div
 							className="text-white py-4"
 						>Don't have an account? Click <a
-							className="text-theme-green hover:text-theme-lightgreen hover:underline"
+							className="text-theme-green hover:text-green-400 transition"
 							href="/register"
 						>here</a>
 						</div>

@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 
 import { API } from "@/utils/trpc/trpc";
+import { setFlagsFromString } from "v8";
+import ActionButton from "@/components/ActionButton";
 
 interface UserAboutProps {
 	about: string
@@ -56,13 +58,14 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 	const [isEditorVisible, setIsEditorVisible] = useState(false);
 
 	const [aboutText, setAboutText] = useState(about);
+	const [isAboutUpdated, setIsAboutUpdated] = useState(true);
 
 	/**
 	 * Ref of the textarea so we move focus to this element.
 	 */
 	const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-	const focusTextArea = useCallback(() => { 
+	const focusTextArea = useCallback(() => {
 		if (textAreaRef) {
 			textAreaRef.current?.focus();
 			textAreaRef.current?.setSelectionRange(aboutText.length, aboutText.length);
@@ -99,10 +102,12 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 	 * Call the `Save` mutation and reset the editor if successful.
 	 */
 	async function _onSaveButtonPressed(event: React.MouseEvent<HTMLButtonElement>) {
-		event.preventDefault()
+		event.preventDefault();
+		setIsAboutUpdated(false);
 		const success = await onSaveButtonPressed(aboutText)
 		if (success) {
 			setIsEditorVisible(false);
+			setIsAboutUpdated(true);
 		}
 	}
 
@@ -124,16 +129,17 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 							</div>
 							{/** ui */}
 							<div className="flex flex-row-reverse gap-x-2">
-
 								<button
 									className="mb-4 px-1 py-1 sm:mt-3 bg-red-700 rounded-lg text-white hover:bg-red-500"
 									onClick={onCancelButtonPressed}
 								>Cancel</button>
 
-								<button
-									className="mb-4 px-1 py-1 sm:mt-3 bg-theme-darkgreen rounded-lg text-white hover:bg-theme-lightgreen"
-									onClick={_onSaveButtonPressed}
-								>Save</button>
+
+								<ActionButton
+									success={isAboutUpdated}
+									onActionButtonPressed={_onSaveButtonPressed}
+									className="mb-4 px-1 py-1 sm:mt-3 bg-theme-green hover:bg-green-500 rounded-lg text-white"
+								/>
 							</div>
 						</div> :
 						<p className="h-full pt-2 whitespace-pre">{about}</p>

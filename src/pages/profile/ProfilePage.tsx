@@ -6,7 +6,7 @@ import { API } from "@/utils/trpc/trpc";
 
 import Navbar from "@/components/Navbar/Navbar";
 
-import PfpSelector from "./components/user/UserPfp";
+import PfpSelector from "./components/user/PfpSelector";
 import Pfp from "./components/Pfp";
 
 import AboutEditor from "./components/user/AboutEditor";
