@@ -269,7 +269,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 						</div>
 					</div>
 				</div>
-				<div className={`flex flex-1 bg-slate-200  ${(isDisplayingChatNav && "hidden")}`}>
+				<div className={`flex flex-1 bg-slate-200  ${(isDisplayingChatNav && "hidden sm:inline")}`}>
 					<Chatbox
 						onSendMessage={onSendMessage}
 						messageHandler={messageHandler}
