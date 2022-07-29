@@ -244,8 +244,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 		onChatNavigationButtonPressed(event);
 	}
 
-	function onViewRoomsPressed(event: React.MouseEvent<HTMLButtonElement>) {
-		// toggle the view
+	function onViewRoomsPressed(_: React.MouseEvent<HTMLButtonElement>) {
 		setIsDisplayingChatNav(true);
 	}
 
