@@ -31,7 +31,7 @@ const ProfilePage: React.FC = () => {
 	// Temporary filler data while the query loads.
 	const tempProfileData = {
 		uid: uid,
-		username: "Loading...",
+		username: "",
 		pfp_url: "",
 		about: ""
 	};
