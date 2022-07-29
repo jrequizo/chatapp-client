@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { PaperPlaneRight } from "phosphor-react";
+import { ArrowCircleLeft, ArrowLeft, PaperPlaneRight } from "phosphor-react";
 
 import ChatProperties from "@/types/ChatProperties";
 import ChatMessage from "@/types/ChatMessage";
@@ -13,6 +13,7 @@ type ChatboxProps = {
 	properties: ChatProperties
 	onSendMessage: (message: string) => void
 	messageHandler: MessageHandler
+	onViewRoomsPressed: React.MouseEventHandler<HTMLButtonElement>
 }
 
 /**
@@ -23,7 +24,8 @@ type ChatboxProps = {
 const Chatbox: React.FC<ChatboxProps> = ({
 	properties,
 	onSendMessage,
-	messageHandler
+	messageHandler,
+	onViewRoomsPressed
 }: ChatboxProps) => {
 	messageHandler.bindOnMessage(onMessageReceived)
 
@@ -92,7 +94,10 @@ const Chatbox: React.FC<ChatboxProps> = ({
 		<div className="flex flex-col grow shrink w-full h-full">
 
 			<div className="h-16 flex items-center shadow-md w-full">
-				<span className="pl-6 text-left text-2xl">{`#${properties?.chatName}`}</span>
+				<button className="px-4 sm:hidden" onClick={onViewRoomsPressed}>
+					<ArrowLeft size={28} weight="light" color="gray"/>
+				</button>
+				<span className="sm:pl-6 text-left text-2xl">{`#${properties?.chatName}`}</span>
 			</div>
 
 			<div className="flex flex-col grow w-full h-full">
