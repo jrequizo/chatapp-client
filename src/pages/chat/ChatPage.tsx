@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { io, Socket } from 'socket.io-client';
@@ -208,7 +208,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 	messageHandler
 }: ChatComponentProps) => {
 	// State for currently selected Chat.
-	const [activeChat, setActiveChat] = useState(0)
+	const [activeChat, setActiveChat] = useState(0);
+	const [isDisplayingChatNav, setIsDisplayingChatNav] = useState(false);
+
+	const navigationPanelRef = useRef<HTMLDivElement>(null);
 
 	/**
 	 * Create the JSX.Element[] props for the Chat buttons on the left navigation panel.
@@ -233,21 +236,29 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 
 		setActiveChat(parseInt(index))
 
+		if (isDisplayingChatNav) {
+			setIsDisplayingChatNav(false);
+		}
+
 		// Call the provided callback.
 		onChatNavigationButtonPressed(event);
+	}
+
+	function onViewRoomsPressed(_: React.MouseEvent<HTMLButtonElement>) {
+		setIsDisplayingChatNav(true);
 	}
 
 	return (
 		<main className="Chat">
 			<Navbar />
 			<section>
-				<div className="flex w-72 bg-slate-300">
+				<div className={`w-72 w-screen sm:relative sm:flex w-screen sm:w-48 md:w-72 md:inline bg-slate-300 ${(!isDisplayingChatNav && "hidden")}`} ref={navigationPanelRef}>
 					<div className="flex flex-col">
 						<div className="flex">
 							<button className="flex-1 font-bold bg-slate-200 hover:cursor-not-allowed text-gray-400">Private</button>
 							<button className="flex-1 font-bold text-gray-400">Public</button>
 						</div>
-						<div className="w-72 grow basis-0">
+						<div className={`w-screen sm:w-48 md:w-72 grow basis-0`}>
 							<h3 className="font-normal p-2">-Rooms</h3>
 							<div className="h-full m-3">
 								{
@@ -257,11 +268,12 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 						</div>
 					</div>
 				</div>
-				<div className="flex flex-1 bg-slate-200">
+				<div className={`flex flex-1 bg-slate-200  ${(isDisplayingChatNav && "hidden sm:inline")}`}>
 					<Chatbox
 						onSendMessage={onSendMessage}
 						messageHandler={messageHandler}
 						properties={publicChats[activeChat]}
+						onViewRoomsPressed={onViewRoomsPressed}
 					/>
 				</div>
 			</section>

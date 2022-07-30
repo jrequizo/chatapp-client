@@ -31,7 +31,7 @@ const ProfilePage: React.FC = () => {
 	// Temporary filler data while the query loads.
 	const tempProfileData = {
 		uid: uid,
-		username: "Loading...",
+		username: "",
 		pfp_url: "",
 		about: ""
 	};
@@ -84,29 +84,34 @@ const ProfileComponent: React.FC<ProfileComponentProps> = ({
 			{/* Username */}
 			<ProfileBar username={username} />
 			{/* Profile section */}
-			<section className="grid grid-cols-1 md:grid-cols-2 bg-white mx-auto overflow-y-scroll md:w-8/12 w-screen">
-				{/* Left area */}
-				{
-					isCurrentUser ?
-						<PfpSelector
-							uid={uid}
-							pfpUrl={pfpUrl}
-						/> :
-						<Pfp
-							pfpUrl={pfpUrl}
-						/>
-				}
+			<section className="grid grid-cols-1 md:flex md:flex-col bg-white mx-auto overflow-y-scroll md:w-7/12 w-screen">
+				<div className="sm:flex">
+					{/* Left area */}
+					{
+						isCurrentUser ?
+							<PfpSelector
+								uid={uid}
+								pfpUrl={pfpUrl}
+							/> :
+							<Pfp
+								pfpUrl={pfpUrl}
+							/>
+					}
 
-				{/* Right area */}
-				{
-					isCurrentUser ?
-						<AboutEditor
-							about={about}
-						/> :
-						<UserAbout
-							about={about}
-						/>
-				}
+					{/* Right area */}
+					{
+						isCurrentUser ?
+							<AboutEditor
+								about={about}
+							/> :
+							<UserAbout
+								about={about}
+							/>
+					}
+				</div>
+				<div className="flex h-0 border-b-2 my-4 mx-3">
+
+				</div>
 				<FriendsList />
 			</section>
 		</main>

@@ -26,7 +26,7 @@ const Navbar: React.FC = () => {
 					src={`${process.env.PUBLIC_URL}/images/chatbox-navbar.svg`}
 					alt="Logo"
 				></img>
-				<span className="pl-1.5 text-3xl">ChatBox</span>
+				<span className="pl-1.5 text-3xl hidden sm:inline">ChatBox</span>
 			</button>
 			<ul
 				className="flex items-center"

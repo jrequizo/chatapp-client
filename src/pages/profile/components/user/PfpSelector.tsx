@@ -81,10 +81,10 @@ const PfpSelector: React.FC<PfpSelectorProps> = ({
 	 */
 
 	return (
-		<div className="grid content-center mx-auto py-4 px-3">
-			<div className="grid content-center mx-auto py-4 px-3">
+		<div className="grid content-center sm:flex-none sm:shrink mx-auto py-4 px-3">
+			<div className="grid content-center mx-auto py-4 px-3 w-64">
 				<img
-					className="rounded-3xl w-64 mx-auto aspect-square w-64 object-cover"
+					className="rounded-3xl w-64 mx-auto aspect-square w-64 object-cover pb-4 sm:pb-0"
 					src={displayedPfp}
 					alt="Profile"
 				></img>

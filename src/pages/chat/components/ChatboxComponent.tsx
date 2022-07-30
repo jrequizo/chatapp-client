@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { PaperPlaneRight } from "phosphor-react";
+import { ArrowLeft, PaperPlaneRight, Spinner } from "phosphor-react";
 
 import ChatProperties from "@/types/ChatProperties";
 import ChatMessage from "@/types/ChatMessage";
@@ -13,6 +13,7 @@ type ChatboxProps = {
 	properties: ChatProperties
 	onSendMessage: (message: string) => void
 	messageHandler: MessageHandler
+	onViewRoomsPressed: React.MouseEventHandler<HTMLButtonElement>
 }
 
 /**
@@ -23,7 +24,8 @@ type ChatboxProps = {
 const Chatbox: React.FC<ChatboxProps> = ({
 	properties,
 	onSendMessage,
-	messageHandler
+	messageHandler,
+	onViewRoomsPressed
 }: ChatboxProps) => {
 	messageHandler.bindOnMessage(onMessageReceived)
 
@@ -36,8 +38,8 @@ const Chatbox: React.FC<ChatboxProps> = ({
 	 * Retrieve last `length` messages (or default of 20) from API.
 	 */
 
-	//  const messagesQuery = API.useQuery(["chat.chatHistory", {
-	API.useQuery(["chat.chatHistory", {
+	const messagesQuery = API.useQuery(["chat.chatHistory", {
+		// API.useQuery(["chat.chatHistory", {
 		chatId: properties?.chatId,
 		length: 40
 	}], {
@@ -92,17 +94,24 @@ const Chatbox: React.FC<ChatboxProps> = ({
 		<div className="flex flex-col grow shrink w-full h-full">
 
 			<div className="h-16 flex items-center shadow-md w-full">
-				<span className="pl-6 text-left text-2xl">{`#${properties?.chatName}`}</span>
+				<button className="px-4 sm:hidden" onClick={onViewRoomsPressed}>
+					<ArrowLeft size={28} weight="light" color="gray" />
+				</button>
+				<span className="sm:pl-6 text-left text-2xl">{`#${properties?.chatName}`}</span>
 			</div>
 
 			<div className="flex flex-col grow w-full h-full">
 
 				<div className="flex flex-col-reverse grow basis-0 h-full overflow-y-scroll">
 					{
-						/**
-						 * Create Message components
-						 */
-						messages.map((message) => <ChatMessageComponent messageDetails={message} />)
+						messagesQuery.status === "loading" ?
+							<div className="w-full h-full flex items-center justify-items-center">
+								<Spinner size={48} weight="light" className="animate-spin w-full" />
+							</div> :
+							/**
+							 * Create Message components
+							 */
+							messages.map((message) => <ChatMessageComponent messageDetails={message} />)
 					}
 				</div>
 
