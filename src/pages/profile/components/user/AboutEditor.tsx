@@ -79,7 +79,7 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 		if (isEditorVisible) {
 			focusTextArea();
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isEditorVisible])
 
 	/**
@@ -112,18 +112,18 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 		}
 	}
 
-	return (
-		<div className="py-4 px-3 sm:border-t-2 md:border-t-0 md:border-l-2">
+	return ( //"flex flex-col-reverse grow basis-0
+		<div className="flex-1 flex-col py-4 px-3 sm:border-t-2 md:border-t-0 md:border-l-2">
 			<div className="flex flex-row border-b border-gray-300">
 				<h3 className="pb-1 w-full font-bold">About Me</h3>
 				{!isEditorVisible && <button className="text-theme-darkgreen hover:text-green-500" onClick={() => {
 					setIsEditorVisible(true);
 				}}>Edit</button>}
 			</div>
-			<form className="h-full">
-				{
-					isEditorVisible ?
-						<div className="h-full flex grow flex-col p-2">
+			{
+				isEditorVisible ?
+					<form className="h-full bg-green-200">
+						<div className="h-full flex grow flex-col p-2 ">
 							{/** content */}
 							<div className="h-full">
 								<textarea className="border-solid border h-full w-full resize-none focus:outline-none p-2" ref={textAreaRef} value={aboutText} onChange={onAboutChanged} />
@@ -142,11 +142,11 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 									className="mb-4 px-1 py-1 sm:mt-3 bg-theme-green hover:bg-green-500 rounded-lg text-white disabled:bg-gray-400"
 								/>
 							</div>
-						</div> :
-						<p className="h-full pt-2 whitespace-pre">{about}</p>
+						</div>
+					</form> :
+					<div className="h-full pt-2 whitespace-pre break-all overflow-hidden">{about}</div>
 
-				}
-			</form>
+			}
 		</div>
 
 	)

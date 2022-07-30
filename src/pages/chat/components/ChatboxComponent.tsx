@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ArrowCircleLeft, ArrowLeft, PaperPlaneRight, Spinner } from "phosphor-react";
+import { ArrowLeft, PaperPlaneRight, Spinner } from "phosphor-react";
 
 import ChatProperties from "@/types/ChatProperties";
 import ChatMessage from "@/types/ChatMessage";
