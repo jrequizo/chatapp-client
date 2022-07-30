@@ -113,7 +113,7 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 	}
 
 	return ( //"flex flex-col-reverse grow basis-0
-		<div className="flex-1 flex-col py-4 px-3 sm:border-t-2 md:border-t-0 md:border-l-2">
+		<div className="flex flex-1 flex-col py-4 px-3 sm:border-t-2 md:border-t-0 md:border-l-2 min-w-0">
 			<div className="flex flex-row border-b border-gray-300">
 				<h3 className="pb-1 w-full font-bold">About Me</h3>
 				{!isEditorVisible && <button className="text-theme-darkgreen hover:text-green-500" onClick={() => {
