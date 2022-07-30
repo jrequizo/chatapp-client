@@ -14,7 +14,7 @@ const UserAbout: React.FC<UserAboutProps> = ({
 				<h3 className="pb-1 w-full font-bold">About Me</h3>
 			</div>
 			<form className="h-full">
-				<p className="h-full pt-2 whitespace-pre">{about}</p>
+				<p className="h-full pt-2 whitespace-pre overflow-hidden">{about}</p>
 			</form>
 		</div>
 	)
