@@ -82,9 +82,9 @@ const ProfileComponent: React.FC<ProfileComponentProps> = ({
 		<main className="bg-gray-300">
 			<Navbar />
 			{/* Username */}
-			<ProfileBar username={username} />
+			<ProfileBar username={username} isCurrentUser={isCurrentUser} />
 			{/* Profile section */}
-			<section className="grid grid-cols-1 md:flex md:flex-col bg-white mx-auto overflow-y-scroll md:w-7/12 w-screen">
+			<section className="md:max-w-[768px] flex flex-col bg-white mx-auto overflow-y-scroll w-screen">
 				<div className="sm:flex">
 					{/* Left area */}
 					{

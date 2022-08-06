@@ -91,7 +91,7 @@ const Chatbox: React.FC<ChatboxProps> = ({
 	}
 
 	return (
-		<div className="flex flex-col grow shrink w-full h-full">
+		<div className="flex flex-col w-full h-full">
 
 			<div className="h-16 flex items-center shadow-md w-full">
 				<button className="px-4 sm:hidden" onClick={onViewRoomsPressed}>
@@ -100,9 +100,9 @@ const Chatbox: React.FC<ChatboxProps> = ({
 				<span className="sm:pl-6 text-left text-2xl">{`#${properties?.chatName}`}</span>
 			</div>
 
-			<div className="flex flex-col grow w-full h-full">
+			<div className="flex flex-col basis-full shrink w-full">
 
-				<div className="flex flex-col-reverse grow basis-0 h-full overflow-y-scroll">
+				<div className="flex flex-col-reverse grow basis-0 overflow-y-scroll px-2">
 					{
 						messagesQuery.status === "loading" ?
 							<div className="w-full h-full flex items-center justify-items-center">
@@ -126,7 +126,7 @@ const Chatbox: React.FC<ChatboxProps> = ({
 						autoFocus={true}
 						ref={chatInputRef}
 					/>
-					<button className="p-0 pr-6 bg-transparent" onClick={onSendButtonPressed}>
+					<button className="p-0 sm:pr-6 bg-transparent" onClick={onSendButtonPressed}>
 						<PaperPlaneRight size={44} weight="fill" color="#cbd5e1" className="chatbox-input-button-icon" />
 					</button>
 				</div>

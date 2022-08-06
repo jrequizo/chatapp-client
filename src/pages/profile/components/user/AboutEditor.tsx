@@ -122,8 +122,8 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 			</div>
 			{
 				isEditorVisible ?
-					<form className="h-full bg-green-200">
-						<div className="h-full flex grow flex-col p-2 ">
+					<form className="h-full">
+						<div className="h-full flex flex-col p-2">
 							{/** content */}
 							<div className="h-full">
 								<textarea className="border-solid border h-full w-full resize-none focus:outline-none p-2" ref={textAreaRef} value={aboutText} onChange={onAboutChanged} />
@@ -131,8 +131,9 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 							{/** ui */}
 							<div className="flex flex-row-reverse gap-x-2">
 								<button
-									className="mb-4 px-1 py-1 sm:mt-3 bg-red-700 rounded-lg text-white hover:bg-red-500"
+									className="mb-4 px-1 py-1 sm:mt-3 bg-red-700 rounded-lg text-white hover:bg-red-500 disabled:bg-gray-400"
 									onClick={onCancelButtonPressed}
+									disabled={!isAboutUpdated}
 								>Cancel</button>
 
 
@@ -144,7 +145,7 @@ const UserAboutComponent: React.FC<UserAboutComponentProps> = ({
 							</div>
 						</div>
 					</form> :
-					<div className="h-full pt-2 whitespace-pre break-all overflow-hidden">{about}</div>
+					<div className="h-full pt-2 break-all">{about}</div>
 
 			}
 		</div>

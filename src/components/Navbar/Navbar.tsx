@@ -4,11 +4,17 @@ import { UserCirclePlus, ChatCenteredDots, BellSimple, UserCircle } from "phosph
 
 import { getProfile } from "@/utils/credentialManager";
 
+interface NavbarProps {
+	className?: string
+}
+
 /**
  * Navbar component that appears at the top of the application (except in the login).
  * @returns 
  */
-const Navbar: React.FC = () => {
+const Navbar: React.FC<NavbarProps> = ({
+	className
+}) => {
 	/**
 	 * Use navigate instead of <a href=""> tags as this prevents the page from replacing.
 	 */
@@ -19,7 +25,7 @@ const Navbar: React.FC = () => {
 	const userId = getProfile()?.uid;
 
 	return (
-		<nav className="p-2 gap-4 text-white font-bold flex bg-theme-darkgreen justify-between items-stretch">
+		<nav className={`p-2 gap-4 text-white font-bold flex bg-theme-darkgreen justify-between items-stretch ${className}`}>
 			<button className="flex items-center mx-2" onClick={() => navigate(`/`)}>
 				<img
 					className="aspect-square w-12"

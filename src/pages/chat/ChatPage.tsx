@@ -14,6 +14,10 @@ import MessageHandler from "./MessageHandler";
 import Chatbox from "./components/ChatboxComponent";
 import ChatNavigationButton from "./components/ChatNavigationButtonComponent";
 
+
+const chatSocketUrl = process.env.NODE_ENV === 'development' ? `http://${window.location.hostname}:${process.env.REACT_APP_SOCKET_PORT}` : `${process.env.PUBLIC_URL}`
+console.log(chatSocketUrl)
+
 const ChatPage: React.FC = () => {
 	const navigator = useNavigate()
 
@@ -65,9 +69,9 @@ const ChatPage: React.FC = () => {
 	const [messageHandler] = useState<MessageHandler>(new MessageHandler())
 	const [socket, setSocket] = useState<Socket>()
 
-	
+
 	useEffect(() => {
-		const _socket = io(`${process.env.REACT_APP_SOCKET_URL}`, { transports: ['websocket'] })
+		const _socket = io(chatSocketUrl, { transports: ['websocket'] })
 
 		_socket.on('connect', () => {
 			/**
@@ -75,7 +79,7 @@ const ChatPage: React.FC = () => {
 			 * This will emit an `authenticated` event when completed with a boolean indicating
 			 * if the User successfully authenticated.
 			 */
-			_socket.emit("authenticate", {jwt: jwt})
+			_socket.emit("authenticate", { jwt: jwt })
 		})
 
 		/**
@@ -249,10 +253,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 	}
 
 	return (
-		<main className="Chat">
-			<Navbar />
+		<main className="h-full min-h-full">
+			<Navbar className={`${(!isDisplayingChatNav && "hidden sm:flex")}`}/>
 			<section>
-				<div className={`w-72 w-screen sm:relative sm:flex w-screen sm:w-48 md:w-72 md:inline bg-slate-300 ${(!isDisplayingChatNav && "hidden")}`} ref={navigationPanelRef}>
+				<div className={`w-screen sm:flex sm:w-48 md:w-72 md:inline bg-slate-300 ${(!isDisplayingChatNav && "hidden")}`} ref={navigationPanelRef}>
 					<div className="flex flex-col">
 						<div className="flex">
 							<button className="flex-1 font-bold bg-slate-200 hover:cursor-not-allowed text-gray-400">Private</button>
@@ -268,7 +272,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 						</div>
 					</div>
 				</div>
-				<div className={`flex flex-1 bg-slate-200  ${(isDisplayingChatNav && "hidden sm:inline")}`}>
+				<div className={`w-full h-full bg-slate-200 ${(isDisplayingChatNav && "hidden sm:inline")}`}>
 					<Chatbox
 						onSendMessage={onSendMessage}
 						messageHandler={messageHandler}
