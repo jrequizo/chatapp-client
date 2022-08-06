@@ -14,9 +14,9 @@ import MessageHandler from "./MessageHandler";
 import Chatbox from "./components/ChatboxComponent";
 import ChatNavigationButton from "./components/ChatNavigationButtonComponent";
 
+const urlRegex = /^https?:\/\/www[0-9]?\.(.*)$/
 
-const chatSocketUrl = process.env.NODE_ENV === 'development' ? `http://${window.location.hostname}:${process.env.REACT_APP_SOCKET_PORT}` : `${process.env.PUBLIC_URL}`
-console.log(chatSocketUrl)
+const chatSocketUrl = process.env.NODE_ENV === 'development' ? `http://${window.location.hostname}:${process.env.REACT_APP_SOCKET_PORT}` : `chat.${window.location.toString().match(urlRegex)![1]}`
 
 const ChatPage: React.FC = () => {
 	const navigator = useNavigate()
