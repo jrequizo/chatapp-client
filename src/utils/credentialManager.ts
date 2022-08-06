@@ -114,6 +114,10 @@ function getUserObject() {
 	return AES.decrypt(userObject, userAgent).toString(enc.Utf8)
 }
 
+function signOut() {
+	localStorage.clear()
+}
+
 export {
 	storeProfile,
 	getProfile,
@@ -123,5 +127,6 @@ export {
 	getCredentials,
 	getJwt,
 	getRefreshToken,
-	getUserObject
+	getUserObject,
+	signOut
 }
