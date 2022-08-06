@@ -17,7 +17,7 @@ const ProfileBar: React.FC<ProfileBarProps> = ({
 	const navigate = useNavigate();
 
 	return (
-		<div className="bg-white shadow-md md:max-w-[768px] w-screen mx-auto flex flex-row">
+		<div className="bg-white shadow-md md:max-w-[768px] w-screen mx-auto flex flex-row border-b-2">
 			{
 				isCurrentUser && 
 				<button className="p-4 absolute" onClick={() => {
